@@ -3,11 +3,11 @@
     <li>
       <RouterLink to="/home">Home</RouterLink>
     </li>
-    <span class="w-px h-5 bg-zinc-600"></span>
+    <div class="w-px h-5 bg-zinc-600"/>
     <li>
       <RouterLink to="/dashboard">Dashboard</RouterLink>
     </li>
-    <span class="w-px h-5 bg-zinc-600"></span>
+    <div class="w-px h-5 bg-zinc-600"/>
     <li>
       <RouterLink to="/settings">Settings</RouterLink>
     </li>
@@ -34,7 +34,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background-color: #7008e7;
+  background-color: #F042F050;
   transition: width 0.2s ease-in-out;
 }
 
