@@ -1,5 +1,3 @@
-<script setup lang="ts">
-import Navbar from '@/components/organisms/Navbar.vue'
-</script>
+<script setup lang="ts"></script>
 
-<template>dashboard</template>
+<template>Dashboard</template>
