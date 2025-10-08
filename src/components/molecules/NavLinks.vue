@@ -34,7 +34,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background-color: #F042F050;
+  background-color: #F042F0CC;
   transition: width 0.2s ease-in-out;
 }
 

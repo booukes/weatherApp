@@ -4,19 +4,19 @@ import GlassCard from '@/components/atoms/GlassCard.vue'
 // Let's make this data-driven. It's way cleaner.
 const cards = [
   {
-    content: 'This is the main weather card for the favourite city',
+    content: 'todo: main card',
     class: 'col-span-2 row-span-2'
   },
   {
-    content: 'This is the rain predictions chart for the favourite city',
+    content: 'todo: rain card',
     class: 'md:col-span-2'
   },
   {
-    content: 'This is the sunrise time card for the favourite city',
+    content: 'todo: aux cards',
     class: ''
   },
   {
-    content: 'This is the sunset time card for the favourite city',
+    content: 'todo: aux cards',
     class: ''
   }
 ]
