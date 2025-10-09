@@ -17,7 +17,7 @@ const router = createRouter({
       component: AppSettings,
     },
     {
-      path: '/home',
+      path: '/',
       name: 'home',
       component: HomeScreen,
     },

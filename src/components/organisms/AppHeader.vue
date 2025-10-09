@@ -6,7 +6,7 @@ import IconLogo from '@/components/icons/IconLogo.vue'
 
 <template>
   <div class="header-wrapper">
-    <header class="sticky z-50 rounded-2xl drop-shadow-2xl">
+    <header class="sticky z-50 rounded-2xl drop-shadow-2xl blur-target">
       <nav class="nav-container">
         <div class="nav-left">
           <LogoText />
@@ -29,7 +29,16 @@ import IconLogo from '@/components/icons/IconLogo.vue'
   padding: 1rem;
 }
 
+.blur-target{
+  backdrop-filter: blur(5px);
+  transition: backdrop-filter 0.3s ease;
+}
+
+.blur-target:hover{
+  backdrop-filter: blur(30px);
+}
 .nav-container {
+
   display: flex;
   align-items: center;
   width: 100%;
@@ -39,6 +48,7 @@ import IconLogo from '@/components/icons/IconLogo.vue'
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.1);
 }
+
 .nav-left,
 .nav-right {
   flex: 1 1 0;
