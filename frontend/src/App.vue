@@ -11,7 +11,7 @@ const vantaRef = ref<HTMLDivElement | null>(null)
 
 interface VantaEffect {
   destroy: () => void;
-  setOptions: (options: Record<string, any>) => void;
+  setOptions: (options: Record<string, unknown>) => void;
 }
 
 let vantaEffect: VantaEffect | null = null;

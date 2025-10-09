@@ -19,7 +19,7 @@ interface AqiData {
 }
 
 const mockAqiData: AqiData = {
-  currentAqi: 74,
+  currentAqi: 20,
   dominantPollutant: 'ch4',
   pollutants: {
     'pm2.5': { value: 5, unit: 'µg/m³' },

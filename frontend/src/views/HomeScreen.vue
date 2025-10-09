@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import GlassCard from '@/components/atoms/GlassCard.vue'
-import { Chart, registerables } from 'chart.js'
+import { Chart, type ChartConfiguration, type ChartItem, registerables } from 'chart.js'
 import SkySpinner from '@/components/atoms/SkySpinner.vue'
 import { WeatherCondition, current_weather_condition } from '@/stores/weatherStore'
 import sunnyIcon from '@/components/icons/weather/sunny.svg'
@@ -44,7 +44,7 @@ const mockWeatherData: WeatherData = {
   temperature: 18,
   feels_like: 17,
   humidity: 65,
-  description: WeatherCondition.Sunny,
+  description: WeatherCondition.Thunderstorm,
   wind_speed: 15, // km/h
   pressure: 1012, // hPa
   cloud_cover: 75, // %
@@ -84,39 +84,34 @@ const weatherDescriptionText = computed(() => {
 
 const createChart = () => {
   if (!rainChartCanvas.value || !weatherData.value) return
-
-  const ctx = rainChartCanvas.value.getContext('2d')
+  const canvas = rainChartCanvas.value
+  const ctx = canvas.getContext('2d')
   if (!ctx) return
+  if (rainChart) rainChart.destroy()
 
-  if (rainChart) {
-    rainChart.destroy()
-  }
+  const labels = weatherData.value.rain_probability.map((item) => item.time)
+  const data = weatherData.value.rain_probability.map((item) => item.probability)
+  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.offsetHeight)
+  gradient.addColorStop(0, 'rgba(75, 192, 192, 0.6)')
+  gradient.addColorStop(1, 'rgba(75, 192, 192, 0)')
 
-  const labels = weatherData.value.rain_probability.map((p) => p.time)
-  const data = weatherData.value.rain_probability.map((p) => p.probability)
-
-  const gradient = ctx.createLinearGradient(0, 0, 0, 200)
-  gradient.addColorStop(0, 'rgba(74, 144, 226, .7)')
-  gradient.addColorStop(1, 'rgba(74, 144, 226, 0)')
-
-  rainChart = new Chart(ctx, {
+  const config: ChartConfiguration = {
     type: 'line',
     data: {
       labels: labels,
       datasets: [
         {
-          label: 'Rain Probability (%)',
+          label: 'rain Index',
           data: data,
-          borderColor: '#63a4ff',
-          pointBackgroundColor: '#fff',
-          pointBorderColor: '#63a4ff',
-          pointHoverRadius: 10,
-          pointHoverBackgroundColor: '#63a4ff',
-          pointRadius: 5,
-          borderWidth: 2,
-          fill: true,
           backgroundColor: gradient,
-          tension: 0.5,
+          borderColor: 'rgb(75, 192, 192)',
+          borderWidth: 2,
+          pointBackgroundColor: 'rgb(75, 192, 192)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgb(75, 192, 192)',
+          tension: 0.4,
+          fill: true,
         },
       ],
     },
@@ -124,37 +119,36 @@ const createChart = () => {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          display: false,
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleFont: { size: 14, weight: 'bold' },
+          bodyFont: { size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: { label: (context) => ` Probability: ${context.parsed.y}` },
         },
       },
       scales: {
         y: {
           beginAtZero: true,
-          max: 100,
-          grid: {
-            color: 'rgba(255, 255, 255, 0.1)',
-          },
-          ticks: {
-            color: '#a0aec0',
-            callback: function (value) {
-              return value + '%'
-            },
-          },
+          grid: { color: 'rgba(255, 255, 255, 0.1)' },
+          ticks: { color: 'rgba(255, 255, 255, 0.7)' },
         },
         x: {
-          grid: {
-            display: false,
-          },
+          grid: { display: false },
           ticks: {
-            color: '#a0aec0',
+            color: 'rgba(255, 255, 255, 0.7)',
+            maxRotation: 0,
+            autoSkip: true,
+            maxTicksLimit: 12,
           },
         },
       },
     },
-  })
+  }
+  rainChart = new Chart(canvas as ChartItem, config)
 }
-
 onMounted(() => {
   setTimeout(() => {
     weatherData.value = mockWeatherData
@@ -236,7 +230,8 @@ watch(weatherData, (newData) => {
 
     <GlassCard v-if="weatherData" class="md:col-span-2 p-4" radius="rounded-md" :delay="200">
       <div class="flex flex-col h-full">
-        <h3 class="font-bold mb-2 px-2">Rain Probability</h3>
+        <h2 class="text-2xl font-bold">Precipitation Trend</h2>
+        <p class="text-md text-zinc-400">Last 24 hours</p>
         <div class="flex-grow relative">
           <canvas ref="rainChartCanvas"></canvas>
         </div>
