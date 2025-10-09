@@ -38,6 +38,6 @@
 </template>
 <style scoped type="text/css">
 .st0 {
-  fill: #F042F0CC;
+  fill: #1095E6;
 }
 </style>
