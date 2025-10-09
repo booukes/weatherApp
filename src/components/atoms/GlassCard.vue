@@ -23,7 +23,7 @@ const cardRadius = props.radius || 'rounded-lg'
       }
     }"
     class="card"
-    :class="`${cardRadius} bg-[#1e1e1e30] border-white/30 border-[1px] text-zinc-300 p-4`"
+    :class="`${cardRadius} bg-[#1e1e1e30] sm:mb-6 border-white/30 border-[1px] text-zinc-300 p-4`"
   >
     <slot></slot>
   </div>
