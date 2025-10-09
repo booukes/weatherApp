@@ -5,7 +5,7 @@
     </li>
     <div class="w-px h-5 bg-zinc-600"/>
     <li>
-      <RouterLink to="/dashboard">Dashboard</RouterLink>
+      <RouterLink to="/aqi">AQI</RouterLink>
     </li>
     <div class="w-px h-5 bg-zinc-600"/>
     <li>

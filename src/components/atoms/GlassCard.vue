@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 
 const props = defineProps<{
   radius?: string
@@ -8,31 +7,32 @@ const props = defineProps<{
 
 const cardRadius = props.radius || 'rounded-lg'
 
-const animationDelay = computed(() => `${props.delay || 0}ms`)
 </script>
 
 <template>
-  <div :class="`${cardRadius} bg-[#1e1e1e40] border-white/10 border-[1px] shadow-xl text-zinc-300 p-4`">
+  <div v-motion
+       :initial="{
+    y: 100,
+    opacity: 0,
+  }"
+       :enter="{
+    y: 0,
+    opacity: 1,
+    transition: {
+      delay: props.delay || 0,
+      type: 'spring',
+      stiffness: 250,
+      damping: 25,
+      mass: 0.5,
+    },
+  }" :class="`${cardRadius} bg-[#1e1e1e40] border-white/10 border-[1px] shadow-xl text-zinc-300 p-4`">
     <slot></slot>
   </div>
 </template>
 
 <style scoped>
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(100px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 div {
-  opacity: 0;
-  animation: slideUp 0.4s ease-out forwards;
-  animation-delay: v-bind(animationDelay);
   transition: box-shadow 0.2s ease-out;
 }
 
