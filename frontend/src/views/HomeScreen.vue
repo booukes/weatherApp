@@ -44,7 +44,7 @@ const mockWeatherData: WeatherData = {
   temperature: 18,
   feels_like: 17,
   humidity: 65,
-  description: WeatherCondition.Thunderstorm,
+  description: WeatherCondition.Sunny,
   wind_speed: 15, // km/h
   pressure: 1012, // hPa
   cloud_cover: 75, // %
@@ -70,7 +70,7 @@ const mockWeatherData: WeatherData = {
     { time: '17:00', probability: 10 },
     { time: '18:00', probability: 25 },
     { time: '19:00', probability: 65 },
-    { time: '20:00', probability: 95 },
+    { time: '20:00', probability: 65 },
     { time: '21:00', probability: 45 },
     { time: '22:00', probability: 70 },
     { time: '23:00', probability: 50 },
