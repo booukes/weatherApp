@@ -1,11 +1,11 @@
 <template>
   <ul class="flex items-center gap-6 text-2xl list-none nav-links">
     <li>
-      <RouterLink to="/home">Home</RouterLink>
+      <RouterLink to="/">Home</RouterLink>
     </li>
     <div class="w-px h-5 bg-zinc-600"/>
     <li>
-      <RouterLink to="/dashboard">Dashboard</RouterLink>
+      <RouterLink to="/aqi">AQI</RouterLink>
     </li>
     <div class="w-px h-5 bg-zinc-600"/>
     <li>
@@ -34,7 +34,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background-color: #F042F0CC;
+  background-color: #1095E6DD;
   transition: width 0.2s ease-in-out;
 }
 
