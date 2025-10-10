@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import GlassCard from '@/components/atoms/GlassCard.vue'
-
+import { getGeolocation } from '@/api';
+const {lat, lon} = await getGeolocation()
+console.log(lat + " " + lon)
 // Let's make this data-driven. It's way cleaner.
 const cards = [
   {
@@ -19,6 +21,7 @@ const cards = [
     content: 'todo: aux cards',
     class: ''
   }
+  
 ]
 </script>
 
