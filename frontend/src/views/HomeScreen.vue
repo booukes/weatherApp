@@ -1,169 +1,29 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import GlassCard from '@/components/atoms/GlassCard.vue'
-import { Chart, type ChartConfiguration, type ChartItem, registerables } from 'chart.js'
-import SkySpinner from '@/components/atoms/SkySpinner.vue'
-import { WeatherCondition, current_weather_condition } from '@/stores/weatherStore'
-import sunnyIcon from '@/components/icons/weather/sunny.svg'
-import cloudyIcon from '@/components/icons/weather/cloudy.svg'
-import partlyCloudyIcon from '@/components/icons/weather/partlycloudy.svg'
-import snowIcon from '@/components/icons/weather/snow.svg'
-import thunderstormIcon from '@/components/icons/weather/thunder.svg'
-import rainIcon from '@/components/icons/weather/rain.svg'
-Chart.register(...registerables)
-
-interface WeatherData {
-  location: string
-  temperature: number
-  feels_like: number
-  humidity: number
-  description: WeatherCondition
-  wind_speed: number
-  pressure: number
-  cloud_cover: number
-  sunrise: string
-  sunset: string
-  rain_probability: { time: string; probability: number }[]
-}
-
-const weatherIcons = {
-  [WeatherCondition.Sunny]: sunnyIcon,
-  [WeatherCondition.Cloudy]: cloudyIcon,
-  [WeatherCondition.PartlyCloudy]: partlyCloudyIcon,
-  [WeatherCondition.Snow]: snowIcon,
-  [WeatherCondition.Thunderstorm]: thunderstormIcon,
-  [WeatherCondition.Rain]: rainIcon,
-}
-
-const weatherData = ref<WeatherData | null>(null)
-const rainChartCanvas = ref<HTMLCanvasElement | null>(null)
-let rainChart: Chart | null = null
-
-const mockWeatherData: WeatherData = {
-  location: 'Warsaw',
-  temperature: 18,
-  feels_like: 17,
-  humidity: 65,
-  description: WeatherCondition.Thunderstorm,
-  wind_speed: 15, // km/h
-  pressure: 1012, // hPa
-  cloud_cover: 75, // %
-  sunrise: '06:15',
-  sunset: '19:45',
-  rain_probability: [
-    { time: '01:00', probability: 0 },
-    { time: '02:00', probability: 0 },
-    { time: '03:00', probability: 0 },
-    { time: '04:00', probability: 0 },
-    { time: '05:00', probability: 0 },
-    { time: '06:00', probability: 0 },
-    { time: '07:00', probability: 0 },
-    { time: '08:00', probability: 0 },
-    { time: '09:00', probability: 0 },
-    { time: '10:00', probability: 0 },
-    { time: '11:00', probability: 0 },
-    { time: '12:00', probability: 0 },
-    { time: '13:00', probability: 0 },
-    { time: '14:00', probability: 0 },
-    { time: '15:00', probability: 0 },
-    { time: '16:00', probability: 10 },
-    { time: '17:00', probability: 10 },
-    { time: '18:00', probability: 25 },
-    { time: '19:00', probability: 65 },
-    { time: '20:00', probability: 65 },
-    { time: '21:00', probability: 45 },
-    { time: '22:00', probability: 70 },
-    { time: '23:00', probability: 50 },
-    { time: '24:00', probability: 20 },
-  ],
-}
-const weatherDescriptionText = computed(() => {
-  if (!weatherData.value) return ''
-  return weatherData.value.description
-})
-
-const createChart = () => {
-  if (!rainChartCanvas.value || !weatherData.value) return
-  const canvas = rainChartCanvas.value
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
-  if (rainChart) rainChart.destroy()
-
-  const labels = weatherData.value.rain_probability.map((item) => item.time)
-  const data = weatherData.value.rain_probability.map((item) => item.probability)
-  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.offsetHeight)
-  gradient.addColorStop(0, 'rgba(75, 192, 192, 0.6)')
-  gradient.addColorStop(1, 'rgba(75, 192, 192, 0)')
-
-  const config: ChartConfiguration = {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: 'rain Index',
-          data: data,
-          backgroundColor: gradient,
-          borderColor: 'rgb(75, 192, 192)',
-          borderWidth: 2,
-          pointBackgroundColor: 'rgb(75, 192, 192)',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: 'rgb(75, 192, 192)',
-          tension: 0.4,
-          fill: true,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          titleFont: { size: 14, weight: 'bold' },
-          bodyFont: { size: 12 },
-          padding: 10,
-          cornerRadius: 8,
-          callbacks: { label: (context) => ` Probability: ${context.parsed.y}` },
-        },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          grid: { color: 'rgba(255, 255, 255, 0.1)' },
-          ticks: { color: 'rgba(255, 255, 255, 0.7)' },
-        },
-        x: {
-          grid: { display: false },
-          ticks: {
-            color: 'rgba(255, 255, 255, 0.7)',
-            maxRotation: 0,
-            autoSkip: true,
-            maxTicksLimit: 12,
-          },
-        },
-      },
-    },
+import { getGeolocation } from '@/api';
+const {lat, lon} = await getGeolocation()
+console.log(lat + " " + lon)
+// Let's make this data-driven. It's way cleaner.
+const cards = [
+  {
+    content: 'todo: main card',
+    class: 'col-span-2 row-span-2'
+  },
+  {
+    content: 'todo: rain card',
+    class: 'md:col-span-2'
+  },
+  {
+    content: 'todo: aux cards',
+    class: ''
+  },
+  {
+    content: 'todo: aux cards',
+    class: ''
   }
-  rainChart = new Chart(canvas as ChartItem, config)
-}
-onMounted(() => {
-  setTimeout(() => {
-    weatherData.value = mockWeatherData
-  }, 500) // Simulate network delay
-})
-watch(weatherData, (newData) => {
-  if (newData) {
-    current_weather_condition.value = newData.description
-    import('vue').then(({ nextTick }) => {
-      nextTick(() => {
-        createChart()
-      })
-    })
-  }
-})
+  
+]
 </script>
 
 <template>
