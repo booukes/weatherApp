@@ -11,8 +11,6 @@ import snowIcon from '@/components/icons/weather/snow.svg'
 import thunderstormIcon from '@/components/icons/weather/thunder.svg'
 import rainIcon from '@/components/icons/weather/rain.svg'
 import { getGeolocation } from '@/api';
-const {lat, lon} = await getGeolocation()
-console.log(lat + " " + lon)
 Chart.register(...registerables)
 interface WeatherData {
   location: string
@@ -145,7 +143,9 @@ const createChart = () => {
   }
   rainChart = new Chart(canvas as ChartItem, config)
 }
-onMounted(() => {
+onMounted(async () => {
+  const { lat, lon } = await getGeolocation()
+  console.log(lat + " " + lon)
   setTimeout(() => {
     weatherData.value = mockWeatherData
   }, 500) // Simulate network delay
