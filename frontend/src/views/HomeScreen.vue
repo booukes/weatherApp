@@ -10,8 +10,8 @@ import partlyCloudyIcon from '@/components/icons/weather/partlycloudy.svg'
 import snowIcon from '@/components/icons/weather/snow.svg'
 import thunderstormIcon from '@/components/icons/weather/thunder.svg'
 import rainIcon from '@/components/icons/weather/rain.svg'
+import { getGeolocation } from '@/api';
 Chart.register(...registerables)
-
 interface WeatherData {
   location: string
   temperature: number
@@ -25,7 +25,6 @@ interface WeatherData {
   sunset: string
   rain_probability: { time: string; probability: number }[]
 }
-
 const weatherIcons = {
   [WeatherCondition.Sunny]: sunnyIcon,
   [WeatherCondition.Cloudy]: cloudyIcon,
@@ -34,11 +33,9 @@ const weatherIcons = {
   [WeatherCondition.Thunderstorm]: thunderstormIcon,
   [WeatherCondition.Rain]: rainIcon,
 }
-
 const weatherData = ref<WeatherData | null>(null)
 const rainChartCanvas = ref<HTMLCanvasElement | null>(null)
 let rainChart: Chart | null = null
-
 const mockWeatherData: WeatherData = {
   location: 'Warsaw',
   temperature: 18,
@@ -81,20 +78,17 @@ const weatherDescriptionText = computed(() => {
   if (!weatherData.value) return ''
   return weatherData.value.description
 })
-
 const createChart = () => {
   if (!rainChartCanvas.value || !weatherData.value) return
   const canvas = rainChartCanvas.value
   const ctx = canvas.getContext('2d')
   if (!ctx) return
   if (rainChart) rainChart.destroy()
-
   const labels = weatherData.value.rain_probability.map((item) => item.time)
   const data = weatherData.value.rain_probability.map((item) => item.probability)
   const gradient = ctx.createLinearGradient(0, 0, 0, canvas.offsetHeight)
   gradient.addColorStop(0, 'rgba(75, 192, 192, 0.6)')
   gradient.addColorStop(1, 'rgba(75, 192, 192, 0)')
-
   const config: ChartConfiguration = {
     type: 'line',
     data: {
@@ -149,7 +143,9 @@ const createChart = () => {
   }
   rainChart = new Chart(canvas as ChartItem, config)
 }
-onMounted(() => {
+onMounted(async () => {
+  const { lat, lon } = await getGeolocation()
+  console.log(lat + " " + lon)
   setTimeout(() => {
     weatherData.value = mockWeatherData
   }, 500) // Simulate network delay
@@ -164,6 +160,8 @@ watch(weatherData, (newData) => {
     })
   }
 })
+// Let's make this data-driven. It's way cleaner.
+
 </script>
 
 <template>
