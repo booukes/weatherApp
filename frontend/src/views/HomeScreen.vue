@@ -158,26 +158,10 @@ watch(weatherData, (newData) => {
         createChart()
       })
     })
-// Let's make this data-driven. It's way cleaner.
-const cards = [
-  {
-    content: 'todo: main card',
-    class: 'col-span-2 row-span-2'
-  },
-  {
-    content: 'todo: rain card',
-    class: 'md:col-span-2'
-  },
-  {
-    content: 'todo: aux cards',
-    class: ''
-  },
-  {
-    content: 'todo: aux cards',
-    class: ''
   }
-  
-]
+})
+// Let's make this data-driven. It's way cleaner.
+
 </script>
 
 <template>
