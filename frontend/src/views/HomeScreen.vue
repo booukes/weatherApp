@@ -144,11 +144,14 @@ const createChart = () => {
   rainChart = new Chart(canvas as ChartItem, config)
 }
 onMounted(async () => {
-  const { lat, lon } = await getGeolocation()
-  console.log(lat + " " + lon)
-  setTimeout(() => {
-    weatherData.value = mockWeatherData
-  }, 500) // Simulate network delay
+  getGeolocation()
+    .then(({ lat, lon }) => {
+      console.log(lat, lon)
+    })
+    .catch((err) => {
+      console.warn('Geo error:', err)
+    })
+  weatherData.value = mockWeatherData
 })
 watch(weatherData, (newData) => {
   if (newData) {
@@ -160,7 +163,6 @@ watch(weatherData, (newData) => {
     })
   }
 })
-// Let's make this data-driven. It's way cleaner.
 
 </script>
 
