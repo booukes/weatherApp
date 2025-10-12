@@ -1,32 +1,20 @@
 <template>
-  <ul class="flex items-center gap-6 text-2xl list-none nav-links">
+  <ul class="flex items-center gap-6 text-lg md:text-2xl list-none nav-links">
     <li>
-      <RouterLink to="/home">Home</RouterLink>
+      <RouterLink class="text-zinc-400 relative pb-2 hover:text-zinc-100 transition-colors duration-200 ease-in-out" to="/">Home</RouterLink>
     </li>
     <div class="w-px h-5 bg-zinc-600"/>
     <li>
-      <RouterLink to="/dashboard">Dashboard</RouterLink>
+      <RouterLink class="text-zinc-400 relative pb-2 hover:text-zinc-100 transition-colors duration-200 ease-in-out" to="/aqi">AQI</RouterLink>
     </li>
     <div class="w-px h-5 bg-zinc-600"/>
     <li>
-      <RouterLink to="/settings">Settings</RouterLink>
+      <RouterLink class="text-zinc-400 relative pb-2 hover:text-zinc-100 transition-colors duration-200 ease-in-out" to="/settings">Settings</RouterLink>
     </li>
   </ul>
 </template>
 
 <style scoped>
-.nav-links a {
-  position: relative;
-  text-decoration: none;
-  padding-bottom: 8px;
-  color: #a1a1aa; /* text-zinc-400 */
-  transition: color 0.2s ease-in-out;
-}
-
-.nav-links a:hover {
-  color: #fafafa; /* text-zinc-50 */
-}
-
 .nav-links a::after {
   content: '';
   position: absolute;
@@ -34,7 +22,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background-color: #F042F0CC;
+  background-color: #1095E6DD;
   transition: width 0.2s ease-in-out;
 }
 

@@ -1,53 +1,62 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import AppHeader from './components/organisms/AppHeader.vue'
+import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
+import * as THREE from 'three'
+import FOG from 'vanta/dist/vanta.fog.min'
+import AppHeader from '@/components/organisms/AppHeader.vue'
+
+import { current_weather_condition, weatherColorPalettes } from '@/stores/weatherStore'
+
+
+const vantaRef = ref<HTMLDivElement | null>(null)
+
+interface VantaEffect {
+  destroy: () => void;
+  setOptions: (options: Record<string, unknown>) => void;
+}
+
+let vantaEffect: VantaEffect | null = null;
+
+onMounted(() => {
+  if (vantaRef.value) {
+    const initialColors = weatherColorPalettes[current_weather_condition.value];
+
+    vantaEffect = FOG({
+      el: vantaRef.value,
+      THREE,
+      minHeight: 200,
+      minWidth: 200,
+      ...initialColors
+    })
+  }
+})
+
+onBeforeUnmount(() => {
+  if (vantaEffect) vantaEffect.destroy()
+})
+
+watch(current_weather_condition, (newCondition) => {
+  if (vantaEffect) {
+    const newColors = weatherColorPalettes[newCondition];
+    vantaEffect.setOptions(newColors);
+  }
+});
 </script>
 
 <template>
+  <div ref="vantaRef" style="position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1;"></div>
   <AppHeader />
   <RouterView />
 </template>
 
 <style>
-@keyframes moveGradient {
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0 50%;
-  }
+*{
+  text-shadow: 1px 2px 3px rgba(0, 0, 0, .7);
 }
-
-body {
-  background-color: #0d1117;
-  color: #e2e8f0;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  width: 100%;
-  overflow-x: hidden;
+html{
+  overflow-y: auto;
+  scrollbar-width: none;
 }
-
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: -1;
-
-  background-image:
-    radial-gradient(at 15% 90%, hsla(320, 75%, 60%, 0.25) 0px, transparent 50%),
-    radial-gradient(at 20% 25%, hsla(260, 80%, 55%, 0.25) 0px, transparent 50%),
-    radial-gradient(at 78% 30%, hsla(300, 85%, 60%, 0.2) 0px, transparent 50%),
-    radial-gradient(at 50% 80%, hsla(240, 70%, 65%, 0.2) 0px, transparent 50%),
-    radial-gradient(at 80% 95%, hsla(280, 80%, 55%, 0.2) 0px, transparent 50%);
-  background-size: 250% 250%;
-
-  animation: moveGradient 20s ease-out infinite;
+html::-webkit-scrollbar {
+  display:none;
 }
 </style>
