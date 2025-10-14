@@ -13,24 +13,26 @@ app.get('/api/weatherData', async (req, res)=>{
         if(!lat || !lon){
             return res.status(400).json({error: "Missing lat or lon"})
         }
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weathercode,wind_speed_10m,surface_pressure,cloud_cover,precipitation_probability&daily=sunrise,sunset&timezone=auto&forecast_days=1`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weathercode,wind_speed_10m,surface_pressure,cloud_cover&hourly=precipitation_probability&daily=sunrise,sunset&timezone=auto&forecast_days=1`;
         const apiResponse = await fetch(url);
         const data = await apiResponse.json();
         if(!apiResponse.ok){
             throw new Error(`API returned ${apiResponse.status}`)
         }
-
+        const currData = data.current
+        const { time, precipitation_probability } = data.hourly
+        const rainProb = time.map((t, i) => ({ time: t.slice(-5), probability: precipitation_probability[i] }))
         const weatherData = {
             location: `${data.latitude}, ${data.longitude}`,
-            temperature: data.current.temperature_2m,
-            feels_like: data.current.apparent_temperature,
-            humidity: data.current.relative_humidity_2m,
-            wind_speed: data.current.wind_speed_10m,
-            pressure: data.current.surface_pressure,
-            cloud_cover: data.current.cloud_cover,
-            rain_probability: data.current.precipitation_probability,
-            sunrise: data.daily.sunrise[0],
-            sunset: data.daily.sunset[0],
+            temperature: currData.temperature_2m,
+            feels_like: currData.apparent_temperature,
+            humidity: currData.relative_humidity_2m,
+            wind_speed: currData.wind_speed_10m,
+            pressure: currData.surface_pressure,
+            cloud_cover: currData.cloud_cover,
+            rain_probability: rainProb,
+            sunrise: data.daily.sunrise[0].slice(-5),
+            sunset: data.daily.sunset[0].slice(-5),
         };
         res.json(weatherData)
 
