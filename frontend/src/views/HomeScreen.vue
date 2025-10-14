@@ -10,7 +10,7 @@ import partlyCloudyIcon from '@/components/icons/weather/partlycloudy.svg'
 import snowIcon from '@/components/icons/weather/snow.svg'
 import thunderstormIcon from '@/components/icons/weather/thunder.svg'
 import rainIcon from '@/components/icons/weather/rain.svg'
-import { getGeolocation } from '@/api';
+import { getGeolocation, getWeather, getAQI } from '@/api';
 Chart.register(...registerables)
 interface WeatherData {
   location: string
@@ -144,11 +144,14 @@ const createChart = () => {
   rainChart = new Chart(canvas as ChartItem, config)
 }
 onMounted(async () => {
-  const { lat, lon } = await getGeolocation()
-  console.log(lat + " " + lon)
-  setTimeout(() => {
-    weatherData.value = mockWeatherData
-  }, 500) // Simulate network delay
+  getGeolocation()
+    .then(({ lat, lon }) => {
+      console.log(lat, lon)
+    })
+    .catch((err) => {
+      console.warn('Geo error:', err)
+    })
+  weatherData.value = mockWeatherData
 })
 watch(weatherData, (newData) => {
   if (newData) {
@@ -160,7 +163,6 @@ watch(weatherData, (newData) => {
     })
   }
 })
-// Let's make this data-driven. It's way cleaner.
 
 </script>
 
