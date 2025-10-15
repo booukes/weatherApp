@@ -10,7 +10,7 @@ import partlyCloudyIcon from '@/components/icons/weather/partlycloudy.svg'
 import snowIcon from '@/components/icons/weather/snow.svg'
 import thunderstormIcon from '@/components/icons/weather/thunder.svg'
 import rainIcon from '@/components/icons/weather/rain.svg'
-import { getGeolocation } from '@/api';
+import { getGeolocation, getWeather, getAQI } from '@/api';
 Chart.register(...registerables)
 interface WeatherData {
   location: string
