@@ -11,7 +11,10 @@ import snowIcon from '@/components/icons/weather/snow.svg'
 import thunderstormIcon from '@/components/icons/weather/thunder.svg'
 import rainIcon from '@/components/icons/weather/rain.svg'
 import { getGeolocation, getWeather, getAQI } from '@/api';
+import { hasVisitedHome } from '@/router/index.ts'
+
 Chart.register(...registerables)
+
 interface WeatherData {
   location: string
   temperature: number
@@ -152,6 +155,7 @@ onMounted(async () => {
       console.warn('Geo error:', err)
     })
   weatherData.value = mockWeatherData
+  hasVisitedHome.value = true
 })
 watch(weatherData, (newData) => {
   if (newData) {
