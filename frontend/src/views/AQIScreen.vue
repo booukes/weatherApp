@@ -2,11 +2,13 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { Chart, registerables, type ChartConfiguration, type ChartItem } from 'chart.js'
 import GlassCard from '@/components/atoms/GlassCard.vue'
+import { getGeolocation, getAQI } from '@/api';
+
 Chart.register(...registerables)
 
 interface AqiData {
   currentAqi: number
-  dominantPollutant: 'pm2.5' | 'pm10' | 'co' | 'o3' | 'ch4' | 'so2'
+  dominantPollutant: 'pm2.5' | 'pm10' | 'co' | 'o3' | 'ch4' | 'so2' 
   pollutants: {
     'pm2.5': { value: number; unit: string }
     pm10: { value: number; unit: string }
@@ -132,8 +134,21 @@ const createChart = () => {
   eaqiChart = new Chart(canvas as ChartItem, config)
 }
 
-onMounted(() => {
-  aqiData.value = mockAqiData
+onMounted( async () => {
+  const userCoords = await getGeolocation()
+    .then(({ lat, lon }) => {
+      return {ulat: lat, ulon: lon}
+    })
+    .catch((err) => {
+      console.warn('Geo error:', err)
+      return {ulat: 52.22, ulon: 21.01}
+    })
+  const apiData = await getAQI(String(userCoords.ulat), String(userCoords.ulon))
+  if(apiData){
+    aqiData.value = apiData
+  } else {
+    aqiData.value = mockAqiData
+  }
 })
 
 watch([aqiData, eaqiChartCanvas], () => {

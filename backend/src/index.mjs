@@ -27,12 +27,13 @@ app.get('/api/weatherData', async (req, res)=>{
             temperature: currData.temperature_2m,
             feels_like: currData.apparent_temperature,
             humidity: currData.relative_humidity_2m,
+            description: currData.weathercode,
             wind_speed: currData.wind_speed_10m,
             pressure: currData.surface_pressure,
             cloud_cover: currData.cloud_cover,
-            rain_probability: rainProb,
             sunrise: data.daily.sunrise[0].slice(-5),
             sunset: data.daily.sunset[0].slice(-5),
+            rain_probability: rainProb,
         };
         res.json(weatherData)
 
@@ -49,15 +50,15 @@ app.get('/api/airQualityData', async(req, res) =>{
         if(!lat || !lon){
             return res.status(400).json({error: "Missing lat or lon"})
         }
-        const url=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&hourly=methane&current=pm10,pm2_5,carbon_monoxide,ozone,sulphur_dioxide,european_aqi&timezone=auto&forecast_days=1`
+        const url=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&hourly=methane,european_aqi&current=pm10,pm2_5,carbon_monoxide,ozone,sulphur_dioxide,european_aqi&timezone=auto&forecast_days=1`
         const apiResponse = await fetch(url)
         const data = await apiResponse.json()
         if(!apiResponse.ok){
             throw new Error(`API returned ${apiResponse.status}`)
         }
         const currData = data.current
-        const time = currData.time
-        const [datePart, timePart] = time.split("T");
+        const currTime = currData.time
+        const [datePart, timePart] = currTime.split("T");
         const [year, month, day] = datePart.split("-").map(Number);
         const [hour, minute] = timePart.split(":").map(Number);
         let formattedTime = new Date(year, month - 1, day, hour, minute);
@@ -67,14 +68,20 @@ app.get('/api/airQualityData', async(req, res) =>{
         }
         const newTime = formattedTime.toLocaleString("sv-SE", { hour12: false }).replace(" ", "T").slice(0, 16);
         const timeIndex = data.hourly.time.findIndex(t => t === newTime)
+        const { time, european_aqi } = data.hourly
+        const euroAqi = time.map((t, i) => ({ time: t.slice(-5), index: european_aqi[i] }))
         const airQualityData={
-            pm2: currData.pm2_5,
-            pm10: currData.pm10,
-            co: currData.carbon_monoxide,
-            o3: currData.ozone,
-            ch4: data.hourly.methane[timeIndex],
-            so2: currData.sulphur_dioxoide,
-            eaqi: {time: time, index: currData.european_aqi}
+            currentAqi: currData.european_aqi,
+            dominantPollutant: 'pm2.5', //make a function deciding which pollutant is the dominant one
+            pollutants: {
+                pm2: currData.pm2_5,
+                pm10: currData.pm10,
+                co: currData.carbon_monoxide,
+                o3: currData.ozone,
+                ch4: data.hourly.methane[timeIndex],
+                so2: currData.sulphur_dioxoide,
+            },
+            eaqi: euroAqi
         }
         res.json(airQualityData)
     } catch(err){

@@ -10,8 +10,11 @@ import partlyCloudyIcon from '@/components/icons/weather/partlycloudy.svg'
 import snowIcon from '@/components/icons/weather/snow.svg'
 import thunderstormIcon from '@/components/icons/weather/thunder.svg'
 import rainIcon from '@/components/icons/weather/rain.svg'
-import { getGeolocation, getWeather, getAQI } from '@/api';
+import { getGeolocation, getWeather } from '@/api';
+import { hasVisitedHome } from '@/router/index.ts'
+
 Chart.register(...registerables)
+
 interface WeatherData {
   location: string
   temperature: number
@@ -143,15 +146,27 @@ const createChart = () => {
   }
   rainChart = new Chart(canvas as ChartItem, config)
 }
-onMounted(async () => {
-  getGeolocation()
+onMounted(async () => { 
+  const userCoords = await getGeolocation()
     .then(({ lat, lon }) => {
-      console.log(lat, lon)
+      return {ulat: lat, ulon: lon}
     })
     .catch((err) => {
       console.warn('Geo error:', err)
+      return {ulat: 52.22, ulon: 21.01}
     })
-  weatherData.value = mockWeatherData
+  const weatherCondArray = Object.keys(WeatherCondition)
+  const apiData = await getWeather(String(userCoords.ulat), String(userCoords.ulon))
+  if(apiData){
+    const data: WeatherData = {
+      ...apiData,
+      description: weatherCondArray[Number(apiData.description)]
+    }
+    weatherData.value = data
+  } else {
+    weatherData.value = mockWeatherData
+  }
+  hasVisitedHome.value = true
 })
 watch(weatherData, (newData) => {
   if (newData) {
