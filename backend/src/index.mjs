@@ -57,6 +57,7 @@ app.get('/api/airQualityData', async(req, res) =>{
             throw new Error(`API returned ${apiResponse.status}`)
         }
         const currData = data.current
+        const currUnits = data.current_units
         const currTime = currData.time
         const [datePart, timePart] = currTime.split("T");
         const [year, month, day] = datePart.split("-").map(Number);
@@ -72,14 +73,14 @@ app.get('/api/airQualityData', async(req, res) =>{
         const euroAqi = time.map((t, i) => ({ time: t.slice(-5), index: european_aqi[i] }))
         const airQualityData={
             currentAqi: currData.european_aqi,
-            dominantPollutant: 'pm2.5', //make a function deciding which pollutant is the dominant one
+            dominantPollutant: 'pm2_5', //make a function deciding which pollutant is the dominant one
             pollutants: {
-                pm2: currData.pm2_5,
-                pm10: currData.pm10,
-                co: currData.carbon_monoxide,
-                o3: currData.ozone,
-                ch4: data.hourly.methane[timeIndex],
-                so2: currData.sulphur_dioxoide,
+                pm2_5: { value: currData.pm2_5, unit: currUnits.pm2_5 },
+                pm10: { value: currData.pm10, unit: currUnits.pm10 },
+                co: { value: currData.carbon_monoxide, unit: currUnits.carbon_monoxide },
+                o3: { value: currData.ozone, unit: currUnits.ozone },
+                ch4: { value: data.hourly.methane[timeIndex], unit: data.hourly_units.methane },
+                so2: { value: currData.sulphur_dioxide, unit: currUnits.sulphur_dioxide },
             },
             eaqi: euroAqi
         }
