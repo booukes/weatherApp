@@ -55,7 +55,6 @@ export async function getGeolocation(): Promise<Coordinates> {
   }
   const cacheKey = generateCacheKey(dataType.userCoords)
   if(!isInCache(cacheKey)){
-    console.log("weszlo")
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
