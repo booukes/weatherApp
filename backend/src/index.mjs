@@ -1,4 +1,5 @@
 import express from "express";
+import path from 'path'
 import cors from "cors";
 
 const app = express();
@@ -6,6 +7,26 @@ const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
+
+const __dirname = path.resolve()
+
+
+app.use(express.static(path.join(__dirname, 'demo_board/demo/dist')))
+
+function formatDate(date){
+    const currData = date
+    const currTime = currData.time
+    const [datePart, timePart] = currTime.split("T");
+    const [year, month, day] = datePart.split("-").map(Number);
+    const [hour, minute] = timePart.split(":").map(Number);
+    let formattedTime = new Date(year, month - 1, day, hour, minute);
+    if(formattedTime.getMinutes()>0){
+        formattedTime.setMinutes(0)
+        formattedTime = formattedTime.toISOString().slice(0, 16)
+    }
+    const newTime = formattedTime.toLocaleString("pl-PL", { hour12: false }).replace(" ", "T").slice(0, 16);
+    return newTime
+}
 
 app.get('/api/weatherData', async (req, res)=>{
     try {
@@ -58,16 +79,7 @@ app.get('/api/airQualityData', async(req, res) =>{
         }
         const currData = data.current
         const currUnits = data.current_units
-        const currTime = currData.time
-        const [datePart, timePart] = currTime.split("T");
-        const [year, month, day] = datePart.split("-").map(Number);
-        const [hour, minute] = timePart.split(":").map(Number);
-        let formattedTime = new Date(year, month - 1, day, hour, minute);
-        if(formattedTime.getMinutes()>0){
-            formattedTime.setMinutes(0)
-            formattedTime = formattedTime.toISOString().slice(0, 16)
-        }
-        const newTime = formattedTime.toLocaleString("sv-SE", { hour12: false }).replace(" ", "T").slice(0, 16);
+        const newTime = formatDate(currData)
         const timeIndex = data.hourly.time.findIndex(t => t === newTime)
         const { time, european_aqi } = data.hourly
         const euroAqi = time.map((t, i) => ({ time: t.slice(-5), index: european_aqi[i] }))
@@ -90,9 +102,16 @@ app.get('/api/airQualityData', async(req, res) =>{
         res.status(500).json({error: "Failed to fetch air quality data"})
     }
 })
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'demo_board/demo/dist/index.html'))
+})
+
 app.listen(PORT, ()=>{
     console.log(`Running on Port ${PORT}`)
 })
+
+
 
 //req param - :param
 //access req params - req.params
