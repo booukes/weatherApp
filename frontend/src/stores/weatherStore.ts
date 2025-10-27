@@ -9,6 +9,37 @@ export enum WeatherCondition {
   Snow = 'Snow',
 }
 
+export const weatherCodeMap = new Map([
+  [0, "Clear sky"],
+  [1, "PartlyCloudy"],
+  [2, "PartlyCloudy"],
+  [3, "PartlyCloudy"],
+  [45, "Cloudy"],
+  [48, "Cloudy"],
+  [51, "Rain"],
+  [53, "Rain"],
+  [55, "Rain"],
+  [56, "Rain"],
+  [57, "Rain"],
+  [61, "Rain"],
+  [63, "Rain"],
+  [65, "Rain"],
+  [66, "Rain"],
+  [67, "Rain"],
+  [71, "Snow"],
+  [73, "Snow"],
+  [75, "Snow"],
+  [77, "Snow"],
+  [80, "Rain"],
+  [81, "Rain"],
+  [82, "Rain"],
+  [85, "Snow"],
+  [86, "Snow"],
+  [95, "Thunderstorm"],
+  [96, "Thunderstorm"],
+  [99, "Thunderstorm"]
+]);
+
 export const weatherColorPalettes = {
   [WeatherCondition.Sunny]: {
     highlightColor: 0x3786cd,

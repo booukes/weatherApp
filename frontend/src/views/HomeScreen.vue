@@ -3,14 +3,14 @@ import { ref, onMounted, watch, computed } from 'vue'
 import GlassCard from '@/components/atoms/GlassCard.vue'
 import { Chart, type ChartConfiguration, type ChartItem, registerables } from 'chart.js'
 import SkySpinner from '@/components/atoms/SkySpinner.vue'
-import { WeatherCondition, current_weather_condition } from '@/stores/weatherStore'
+import { WeatherCondition, current_weather_condition, weatherCodeMap } from '@/stores/weatherStore'
 import sunnyIcon from '@/components/icons/weather/sunny.svg'
 import cloudyIcon from '@/components/icons/weather/cloudy.svg'
 import partlyCloudyIcon from '@/components/icons/weather/partlycloudy.svg'
 import snowIcon from '@/components/icons/weather/snow.svg'
 import thunderstormIcon from '@/components/icons/weather/thunder.svg'
 import rainIcon from '@/components/icons/weather/rain.svg'
-import { getGeolocation, getWeather } from '@/api';
+import { getGeolocation, getWeather, forecast_types } from '@/api';
 import { hasVisitedHome } from '@/router/index.ts'
 
 Chart.register(...registerables)
@@ -156,11 +156,12 @@ onMounted(async () => {
       return {ulat: 52.22, ulon: 21.01}
     })
   const weatherCondArray = Object.keys(WeatherCondition)
-  const apiData = await getWeather(String(userCoords.ulat), String(userCoords.ulon))
+  const apiData = await getWeather(String(userCoords.ulat), String(userCoords.ulon), forecast_types.current)
   if(apiData){
     const data: WeatherData = {
-      ...apiData,
-      description: weatherCondArray[Number(apiData.description)]
+      ...apiData.hourly,
+      ...apiData.daily,
+      description: weatherCodeMap.get(Number(apiData.hourly.description))
     }
     weatherData.value = data
   } else {
