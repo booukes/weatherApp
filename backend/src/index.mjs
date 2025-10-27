@@ -160,7 +160,7 @@ app.get('/api/airQualityData', async(req, res) =>{
         const euroAqi = time.map((t, i) => ({ time: t.slice(-5), index: european_aqi[i] }))
         const airQualityData={
             currentAqi: currData.european_aqi,
-            dominantPollutant: 'pm2_5', //make a function deciding which pollutant is the dominant one
+            dominantPollutant: 'pm2_5',
             pollutants: {
                 pm2_5: { value: currData.pm2_5, unit: currUnits.pm2_5 },
                 pm10: { value: currData.pm10, unit: currUnits.pm10 },
