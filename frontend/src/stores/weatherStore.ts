@@ -9,6 +9,37 @@ export enum WeatherCondition {
   Snow = 'Snow',
 }
 
+export const weatherCodeMap = new Map([
+  [0, WeatherCondition.Sunny],
+  [1, WeatherCondition.PartlyCloudy],
+  [2, WeatherCondition.PartlyCloudy],
+  [3, WeatherCondition.PartlyCloudy],
+  [45, WeatherCondition.Cloudy],
+  [48, WeatherCondition.Cloudy],
+  [51, WeatherCondition.Rain],
+  [53, WeatherCondition.Rain],
+  [55, WeatherCondition.Rain],
+  [56, WeatherCondition.Rain],
+  [57, WeatherCondition.Rain],
+  [61, WeatherCondition.Rain],
+  [63, WeatherCondition.Rain],
+  [65, WeatherCondition.Rain],
+  [66, WeatherCondition.Rain],
+  [67, WeatherCondition.Rain],
+  [71, WeatherCondition.Snow],
+  [73, WeatherCondition.Snow],
+  [75, WeatherCondition.Snow],
+  [77, WeatherCondition.Snow],
+  [80, WeatherCondition.Rain],
+  [81, WeatherCondition.Rain],
+  [82, WeatherCondition.Rain],
+  [85, WeatherCondition.Snow],
+  [86, WeatherCondition.Snow],
+  [95, WeatherCondition.Thunderstorm],
+  [96, WeatherCondition.Thunderstorm],
+  [99, WeatherCondition.Thunderstorm]
+]);
+
 export const weatherColorPalettes = {
   [WeatherCondition.Sunny]: {
     highlightColor: 0x3786cd,
@@ -47,10 +78,10 @@ export const weatherColorPalettes = {
     zoom: 1,
   },
   [WeatherCondition.Thunderstorm]: {
-    highlightColor: 0xC080FF, // bright neon lavender
-    midtoneColor: 0x6A2FB0,   // deep, saturated purple
-    lowlightColor: 0x2A0D4B,  // almost-black purple
-    baseColor: 0x3F1E6D,      // dark bluish-purple base
+    highlightColor: 0xC080FF,
+    midtoneColor: 0x6A2FB0,
+    lowlightColor: 0x2A0D4B,
+    baseColor: 0x3F1E6D,
     blurFactor: 0.60,
     speed: 1,
     zoom: 1,

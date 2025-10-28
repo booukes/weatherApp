@@ -8,13 +8,11 @@ Chart.register(...registerables)
 
 interface AqiData {
   currentAqi: number
-  dominantPollutant: 'pm2_5' | 'pm10' | 'co' | 'o3' | 'ch4' | 'so2' 
   pollutants: {
     pm2_5: { value: number; unit: string }
     pm10: { value: number; unit: string }
     co: { value: number; unit: string }
     o3: { value: number; unit: string }
-    ch4: { value: number; unit: string }
     so2: { value: number; unit:string }
   }
   eaqi: { time: string; index: number }[]
@@ -22,13 +20,11 @@ interface AqiData {
 
 const mockAqiData: AqiData = {
   currentAqi: 20,
-  dominantPollutant: 'ch4',
   pollutants: {
     pm2_5: { value: 5, unit: 'µg/m³' },
     pm10: { value: 2.7, unit: 'µg/m³' },
     co: { value: 16, unit: 'ppm' },
     o3: { value: 18, unit: 'ppb' },
-    ch4: { value: 76, unit: 'ppb' },
     so2: { value: 464, unit: 'ppb' }
   },
   eaqi: [
@@ -68,23 +64,47 @@ const pollutantList = computed(() => {
     { name: 'PM₁₀', ...aqiData.value.pollutants.pm10 },
     { name: 'CO', ...aqiData.value.pollutants.co },
     { name: 'O₃', ...aqiData.value.pollutants.o3 },
-    { name: 'CH₄', ...aqiData.value.pollutants.ch4 },
     { name: 'SO₂', ...aqiData.value.pollutants.so2 },
   ]
 })
 
 const dominantPollutantInfo = computed(() => {
   if (!aqiData.value) return null
-  const dominantKey = aqiData.value.dominantPollutant;
-  const pollutantData = aqiData.value.pollutants[dominantKey];
+
+  const pollutants = aqiData.value.pollutants;
+
+  const thresholds = {
+    pm2_5: 25,
+    pm10: 50,
+    co: 10000,
+    o3: 120,
+    so2: 125,
+  };
+
+  let dominantKey = 'pm2_5' as keyof typeof thresholds;
+  let maxRatio = -1;
+
+  for (const key in thresholds) {
+    const typedKey = key as keyof typeof thresholds;
+    const pollutantData = pollutants[typedKey];
+    if (pollutantData && typeof pollutantData.value === 'number') {
+      const ratio = pollutantData.value / thresholds[typedKey];
+      if (ratio > maxRatio) {
+        maxRatio = ratio;
+        dominantKey = typedKey;
+      }
+    }
+  }
+
+  const pollutantData = pollutants[dominantKey];
   const nameMap = {
     'pm2_5': 'PM₂.₅',
     'pm10': 'PM₁₀',
     'co': 'CO',
     'o3': 'O₃',
-    'ch4': 'CH₄',
     'so2': 'SO₂'
   }
+
   return {
     name: nameMap[dominantKey],
     ...pollutantData
