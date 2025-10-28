@@ -149,7 +149,7 @@
   }
 
   100% {
-    stroke-dasharray: 3px 10px;
+    stroke-dasharray: 3px 150px;
     stroke-dashoffset: 0px;
   }
 }

@@ -17,9 +17,9 @@ const cardRadius = props.radius || 'rounded-lg'
       transition: {
         delay: props.delay || 0,
         type: 'spring',
-        stiffness: 550,
-        damping: 20,
-        mass: 2.5
+        stiffness: 350,
+        damping: 50,
+        mass: .5
       }
     }"
     class="card"
