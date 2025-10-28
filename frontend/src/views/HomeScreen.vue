@@ -123,7 +123,7 @@ const currentDateTime = computed(() => {
   if (!allHourlyData.value.length || currentHourIndex.value < 0) {
     return { date: '', time: '' }
   }
-  const current = allHourlyData.value[currentHourIndex.value]
+  const current = allHourlyData.value[currentHourIndex.value]!
   const dateObj = new Date(current.time)
   const date = dateObj.toLocaleDateString('en-US', {
     weekday: 'short',
@@ -195,7 +195,7 @@ const getLocationName = async (lat: number, lon: number): Promise<string> => {
 const updateWeatherDisplay = () => {
   if (!allHourlyData.value.length || !allDailyData.value.length) return
 
-  const currentData = allHourlyData.value[currentHourIndex.value]
+  const currentData = allHourlyData.value[currentHourIndex.value]!
   const currentDate = currentData.date
 
   // Find daily data for current date
@@ -230,7 +230,7 @@ const loadWeatherData = async (lat: number, lon: number, locationName?: string) 
   if (!locationName) {
     locationName = await getLocationName(lat, lon)
   }
-
+  console.log(locationName)
   currentLocationName.value = locationName
 
   const apiData = await getWeather(
@@ -287,7 +287,6 @@ const toggleSearchInput = () => {
 const useCurrentLocation = async () => {
   isSearching.value = true
   searchError.value = ''
-
   try {
     const coords = await getGeolocation()
     userCoords.value = { lat: coords.lat, lon: coords.lon }

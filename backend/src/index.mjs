@@ -90,7 +90,7 @@ app.get('/api/weatherData', async (req, res)=>{
             const allForecastDates = data.daily.time
             const hourlyData = data.hourly
             const dates = hourlyData.time
-            const allRainProb = dates.map((t, i) => ({ time: t, probability: hourlyData.precipitation_probability[i], day: new Date(t).toDateString() }))
+            const allRainProb = dates.map((t, i) => ({ time: t.slice(-5), probability: hourlyData.precipitation_probability[i], day: new Date(t).toDateString() }))
             const filteredRainProb = new Map()
 
             for(const date of allForecastDates){
@@ -155,7 +155,6 @@ app.get('/api/airQualityData', async(req, res) =>{
         const currData = data.current
         const currUnits = data.current_units
         const newTime = formatDate(currData.time)
-        const timeIndex = data.hourly.time.findIndex(t => t === newTime)
         const { time, european_aqi } = data.hourly
         const euroAqi = time.map((t, i) => ({ time: t.slice(-5), index: european_aqi[i] }))
         const airQualityData={
@@ -166,7 +165,6 @@ app.get('/api/airQualityData', async(req, res) =>{
                 pm10: { value: currData.pm10, unit: currUnits.pm10 },
                 co: { value: currData.carbon_monoxide, unit: currUnits.carbon_monoxide },
                 o3: { value: currData.ozone, unit: currUnits.ozone },
-                ch4: { value: data.hourly.methane[timeIndex], unit: data.hourly_units.methane },
                 so2: { value: currData.sulphur_dioxide, unit: currUnits.sulphur_dioxide },
             },
             eaqi: euroAqi
