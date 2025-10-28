@@ -39,7 +39,7 @@ export async function getWeather(
   lon: string,
   forecast_type: forecast_types,
   forecast_days: Number = 1,
-  locationName?: string // Add this parameter
+  locationName?: string
 ) {
   const cacheKey = generateCacheKey(dataType.weatherData, lat, lon, forecast_type, forecast_days)
   if(!isInCache(cacheKey)){
@@ -64,6 +64,7 @@ export async function getWeather(
     if(data) return JSON.parse(data)
   }
 }
+
 export async function getAQI(lat: string, lon: string) {
   const cacheKey = generateCacheKey(dataType.AQIData, lat, lon)
   if(!isInCache(cacheKey)){
@@ -76,6 +77,7 @@ export async function getAQI(lat: string, lon: string) {
     if(data) return JSON.parse(data)
   }
 }
+
 type Coordinates = {
   lat: number;
   lon: number;
@@ -104,20 +106,20 @@ export async function getGeolocation(): Promise<Coordinates> {
     });
   }
   return new Promise((resolve, reject) => {
-        const testData = localStorage.getItem(cacheKey)
-        if(testData){
-          const parsedData = JSON.parse(testData)
-          const data:Coordinates={
-            lat: Number(parsedData.lat),
-            lon: Number(parsedData.lon)
-          }
-          resolve(data)
+      const testData = localStorage.getItem(cacheKey)
+      if(testData){
+        const parsedData = JSON.parse(testData)
+        const data:Coordinates={
+          lat: Number(parsedData.lat),
+          lon: Number(parsedData.lon)
         }
-        reject("error");
+        resolve(data)
       }
-    );
-  };
-// Add this new function to convert city name to coordinates
+      reject("error");
+    }
+  );
+}
+
 export async function getCityCoordinates(cityName: string): Promise<Coordinates & { location: string }> {
   const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=en&format=json`);
   const data = await res.json();
@@ -134,3 +136,29 @@ export async function getCityCoordinates(cityName: string): Promise<Coordinates 
   };
 }
 
+// Get location name from coordinates using reverse geocoding
+export async function getLocationName(lat: number, lon: number): Promise<string> {
+  try {
+    // Using BigDataCloud reverse geocoding (free, no API key, CORS-friendly)
+    const res = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`
+    )
+    const data = await res.json()
+
+    if (data) {
+      const city = data.city || data.locality || data.principalSubdivision
+      const country = data.countryName
+
+      if (city && country) {
+        return `${city}, ${country}`
+      } else if (city) {
+        return city
+      } else if (country) {
+        return country
+      }
+    }
+  } catch (error) {
+    console.warn('Could not fetch location name:', error)
+  }
+  return `${lat.toFixed(4)}°, ${lon.toFixed(4)}°` // Fallback to coordinates
+}

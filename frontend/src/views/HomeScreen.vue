@@ -1,16 +1,22 @@
 <script setup lang="ts">
+//external
 import { ref, onMounted, watch, computed } from 'vue'
-import GlassCard from '@/components/atoms/GlassCard.vue'
 import { Chart, type ChartConfiguration, type ChartItem, registerables } from 'chart.js'
-import SkySpinner from '@/components/atoms/SkySpinner.vue'
-import { WeatherCondition, current_weather_condition, weatherCodeMap } from '@/stores/weatherStore'
+
+//components & assets
+import GlassCard from '@/components/atoms/GlassCard.vue'
 import sunnyIcon from '@/components/icons/weather/sunny.svg'
 import cloudyIcon from '@/components/icons/weather/cloudy.svg'
 import partlyCloudyIcon from '@/components/icons/weather/partlycloudy.svg'
 import snowIcon from '@/components/icons/weather/snow.svg'
 import thunderstormIcon from '@/components/icons/weather/thunder.svg'
 import rainIcon from '@/components/icons/weather/rain.svg'
-import { getGeolocation, getWeather, forecast_types, getCityCoordinates } from '@/api'
+
+//store
+import { WeatherCondition, current_weather_condition, weatherCodeMap } from '@/stores/weatherStore'
+
+//api & router
+import { getGeolocation, getWeather, forecast_types, getCityCoordinates, getLocationName } from '@/api'
 import { hasVisitedHome } from '@/router/index.ts'
 
 Chart.register(...registerables)
@@ -123,7 +129,7 @@ const currentDateTime = computed(() => {
   if (!allHourlyData.value.length || currentHourIndex.value < 0) {
     return { date: '', time: '' }
   }
-  const current = allHourlyData.value[currentHourIndex.value]!
+  const current = allHourlyData.value[currentHourIndex.value]
   const dateObj = new Date(current.time)
   const date = dateObj.toLocaleDateString('en-US', {
     weekday: 'short',
@@ -174,28 +180,10 @@ const findCurrentHourIndex = (hourlyData: HourlyForecast[]) => {
   return index >= 0 ? index : 0
 }
 
-// Function to get location name from coordinates
-const getLocationName = async (lat: number, lon: number): Promise<string> => {
-  try {
-    const res = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?latitude=${lat}&longitude=${lon}&count=1&language=en&format=json`
-    )
-    const data = await res.json()
-
-    if (data.results && data.results.length > 0) {
-      const result = data.results[0]
-      return `${result.name}${result.country ? ', ' + result.country : ''}`
-    }
-  } catch (error) {
-    console.warn('Could not fetch location name:', error)
-  }
-  return `${lat.toFixed(2)}°, ${lon.toFixed(2)}°` // Fallback to coordinates
-}
-
 const updateWeatherDisplay = () => {
   if (!allHourlyData.value.length || !allDailyData.value.length) return
 
-  const currentData = allHourlyData.value[currentHourIndex.value]!
+  const currentData = allHourlyData.value[currentHourIndex.value]
   const currentDate = currentData.date
 
   // Find daily data for current date
@@ -230,7 +218,7 @@ const loadWeatherData = async (lat: number, lon: number, locationName?: string) 
   if (!locationName) {
     locationName = await getLocationName(lat, lon)
   }
-  console.log(locationName)
+
   currentLocationName.value = locationName
 
   const apiData = await getWeather(
@@ -287,6 +275,7 @@ const toggleSearchInput = () => {
 const useCurrentLocation = async () => {
   isSearching.value = true
   searchError.value = ''
+
   try {
     const coords = await getGeolocation()
     userCoords.value = { lat: coords.lat, lon: coords.lon }
@@ -587,11 +576,11 @@ watch(weatherData, (newData) => {
       </div>
     </GlassCard>
 
-    <template v-if="!weatherData">
+    <!--<template v-if="!weatherData">
       <div class="col-span-full row-span-full flex justify-center items-center mb-6 min-h-[70vh]">
         <SkySpinner />
       </div>
-    </template>
+    </template>-->
 
     <!-- Footer Navigation -->
     <footer
@@ -708,3 +697,5 @@ watch(weatherData, (newData) => {
     </footer>
   </main>
 </template>
+
+
