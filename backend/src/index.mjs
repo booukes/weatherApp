@@ -146,7 +146,7 @@ app.get('/api/airQualityData', async(req, res) =>{
         if(!lat || !lon){
             return res.status(400).json({error: "Missing lat or lon"})
         }
-        const url=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&hourly=methane,european_aqi&current=pm10,pm2_5,carbon_monoxide,ozone,sulphur_dioxide,european_aqi&timezone=auto&forecast_days=1`
+        const url=`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&hourly=european_aqi&current=pm10,pm2_5,carbon_monoxide,ozone,sulphur_dioxide,european_aqi&timezone=auto&forecast_days=1`
         const apiResponse = await fetch(url)
         const data = await apiResponse.json()
         if(!apiResponse.ok){
