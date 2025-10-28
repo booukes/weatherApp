@@ -38,6 +38,6 @@
 </template>
 <style scoped type="text/css">
 .st0 {
-  fill: #1095E6;
+  fill: oklch(96.7% 0.001 286.375);
 }
 </style>

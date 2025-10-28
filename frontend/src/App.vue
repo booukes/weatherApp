@@ -44,7 +44,6 @@ watch(current_weather_condition, (newCondition) => {
 
 <template>
   <div ref="vantaRef" style="position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1;"></div>
-  <AppHeader />
   <RouterView />
 </template>
 
@@ -53,7 +52,6 @@ watch(current_weather_condition, (newCondition) => {
   text-shadow: 1px 2px 3px rgba(0, 0, 0, .7);
 }
 html{
-  overflow-y: auto;
   scrollbar-width: none;
 }
 html::-webkit-scrollbar {

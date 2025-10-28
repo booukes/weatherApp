@@ -3,6 +3,7 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { Chart, registerables, type ChartConfiguration, type ChartItem } from 'chart.js'
 import GlassCard from '@/components/atoms/GlassCard.vue'
 import { getGeolocation, getAQI } from '@/api';
+import AppHeader from "@/components/organisms/AppHeader.vue";
 
 Chart.register(...registerables)
 
@@ -177,8 +178,8 @@ watch([aqiData, eaqiChartCanvas], () => {
 </script>
 
 <template>
+  <AppHeader />
   <main class="m-4 grid grid-cols-2 md:grid-cols-4 gap-8 auto-rows-[16rem] justify-center">
-
     <GlassCard v-if="aqiData" class="col-span-2 row-span-2" radius="rounded-md" :delay="100">
       <div class="flex flex-col h-full">
         <div class="flex justify-between items-start">

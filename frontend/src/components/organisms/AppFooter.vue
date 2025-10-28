@@ -19,7 +19,7 @@ const emit = defineEmits<{
 
 <template>
   <footer
-    class="fixed w-max md:w-128 bottom-2 left-1/2 -translate-x-1/2 rounded-lg drop-shadow-2xl blur-target border-white/30 md:bg-[rgba(30,30,30,0.25)] backdrop-blur-2xl border px-2"
+    class="w-max md:w-128 bottom-2 left-1/2 -translate-x-1/2 rounded-lg drop-shadow-2xl blur-target border-white/30 md:bg-[rgba(30,30,30,0.25)] backdrop-blur-2xl border px-2"
   >
     <div class="flex items-center justify-between">
       <!-- Left Navigation -->

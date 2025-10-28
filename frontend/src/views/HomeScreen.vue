@@ -21,6 +21,7 @@ import { WeatherCondition, current_weather_condition, weatherCodeMap } from '@/s
 //api & router
 import { getGeolocation, getWeather, forecast_types, getCityCoordinates, getLocationName } from '@/api'
 import { hasVisitedHome } from '@/router/index.ts'
+import AppHeader from "@/components/organisms/AppHeader.vue";
 
 Chart.register(...registerables)
 
@@ -394,8 +395,8 @@ watch(weatherData, (newData) => {
 </script>
 
 <template>
-  <main class="m-4 mt-4 md:grid md:grid-cols-4 gap-8 auto-rows-[22rem] justify-center pb-24">
-
+  <AppHeader />
+  <main class="mx-4 md:grid md:grid-cols-4 gap-8 auto-rows-max justify-center pb-24">
     <GlassCard
       v-if="weatherData"
       class="col-span-2 row-span-2 p-6"
@@ -404,8 +405,8 @@ watch(weatherData, (newData) => {
       <div class="flex flex-col h-full justify-between">
         <div class="flex justify-between items-start min-h-20">
           <Transition name="slide-fade" mode="out-in">
-            <div v-if="!showSearchInput" key="display">
-              <h2 class="text-3xl font-bold">
+            <div v-if="!showSearchInput" key="display" class="flex-1 min-w-0 pr-2">
+              <h2 class="text-2xl sm:text-3xl font-bold break-words">
                 {{
                   weatherData.location
                     ? weatherData.location
@@ -416,39 +417,41 @@ watch(weatherData, (newData) => {
                     : ''
                 }}
               </h2>
-              <p class="text-lg text-zinc-400">{{ weatherDescriptionText }}</p>
+              <p class="text-base sm:text-lg text-zinc-400">{{ weatherDescriptionText }}</p>
             </div>
             <div v-else key="search" class="flex flex-col gap-3 w-full">
-              <div class="flex gap-2">
+              <div class="flex flex-col sm:flex-row gap-2">
                 <input
                   v-model="citySearch"
                   @keypress="handleSearchKeypress"
                   type="text"
-                  placeholder="Enter city name (e.g., London, New York, Tokyo)"
-                  class="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter city name"
+                  class="flex-1 px-3 sm:px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
                   :disabled="isSearching"
                 />
-                <button
-                  @click="searchCity"
-                  :disabled="isSearching || !citySearch.trim()"
-                  class="px-6 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-zinc-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
-                >
-                  {{ isSearching ? 'Searching...' : 'Search' }}
-                </button>
-                <button
-                  @click="useCurrentLocation"
-                  :disabled="isSearching"
-                  class="px-4 py-2 bg-green-500 hover:bg-green-600 disabled:bg-zinc-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
-                  title="Use current location"
-                >
-                  📍
-                </button>
-                <button
-                  @click="toggleSearchInput"
-                  class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg font-semibold transition-colors"
-                >
-                  ✕
-                </button>
+                <div class="flex gap-2">
+                  <button
+                    @click="searchCity"
+                    :disabled="isSearching || !citySearch.trim()"
+                    class="flex-1 sm:flex-none px-4 sm:px-6 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-zinc-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors text-sm sm:text-base"
+                  >
+                    {{ isSearching ? 'Searching...' : 'Search' }}
+                  </button>
+                  <button
+                    @click="useCurrentLocation"
+                    :disabled="isSearching"
+                    class="px-4 py-2 bg-green-500 hover:bg-green-600 disabled:bg-zinc-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
+                    title="Use current location"
+                  >
+                    📍
+                  </button>
+                  <button
+                    @click="toggleSearchInput"
+                    class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg font-semibold transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
               <p v-if="searchError" class="text-red-400 text-sm">{{ searchError }}</p>
             </div>
@@ -456,12 +459,12 @@ watch(weatherData, (newData) => {
           <button
             v-if="!showSearchInput"
             @click="toggleSearchInput"
-            class="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            class="p-2 hover:bg-white/10 rounded-lg transition-colors flex-shrink-0"
             title="Search for a city"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6"
+              class="w-5 h-5 sm:w-6 sm:h-6"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -589,6 +592,7 @@ watch(weatherData, (newData) => {
       @previous-hour="navigatePreviousHour"
       @next-hour="navigateNextHour"
       @to-end="navigateToEnd"
+      class="fixed md:flex md:flex-row md:items-center md:justify-center"
     />
   </main>
 </template>
