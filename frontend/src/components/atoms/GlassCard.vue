@@ -4,7 +4,7 @@ const props = defineProps<{
   delay?: number
 }>()
 
-const cardRadius = props.radius || 'rounded-lg'
+const cardRadius = props.radius || 'rounded-md'
 </script>
 
 <template>

@@ -1,3 +1,5 @@
+<!-- Modified original component (e.g., Home.vue) -->
+
 <script setup lang="ts">
 //external
 import { ref, onMounted, watch, computed } from 'vue'
@@ -5,6 +7,7 @@ import { Chart, type ChartConfiguration, type ChartItem, registerables } from 'c
 
 //components & assets
 import GlassCard from '@/components/atoms/GlassCard.vue'
+import AppFooter  from '@/components/organisms/AppFooter.vue' // Add this import
 import sunnyIcon from '@/components/icons/weather/sunny.svg'
 import cloudyIcon from '@/components/icons/weather/cloudy.svg'
 import partlyCloudyIcon from '@/components/icons/weather/partlycloudy.svg'
@@ -130,7 +133,7 @@ const currentDateTime = computed(() => {
     return { date: '', time: '' }
   }
   const current = allHourlyData.value[currentHourIndex.value]
-  const dateObj = new Date(current.time)
+  const dateObj = new Date(current!.time)
   const date = dateObj.toLocaleDateString('en-US', {
     weekday: 'short',
     year: 'numeric',
@@ -184,7 +187,7 @@ const updateWeatherDisplay = () => {
   if (!allHourlyData.value.length || !allDailyData.value.length) return
 
   const currentData = allHourlyData.value[currentHourIndex.value]
-  const currentDate = currentData.date
+  const currentDate = currentData!.date
 
   // Find daily data for current date
   const dailyData = allDailyData.value.find(d => d.time === currentDate)
@@ -198,13 +201,13 @@ const updateWeatherDisplay = () => {
 
   weatherData.value = {
     location: currentLocationName.value, // Use stored location name
-    temperature: currentData.temperature,
-    feels_like: currentData.feels_like,
-    humidity: currentData.humidity,
-    description: weatherCodeMap.get(currentData.description) as WeatherCondition || WeatherCondition.Sunny,
-    wind_speed: currentData.wind_speed,
-    pressure: currentData.pressure,
-    cloud_cover: currentData.cloud_cover,
+    temperature: currentData!.temperature,
+    feels_like: currentData!.feels_like,
+    humidity: currentData!.humidity,
+    description: weatherCodeMap.get(currentData!.description) as WeatherCondition || WeatherCondition.Sunny,
+    wind_speed: currentData!.wind_speed,
+    pressure: currentData!.pressure,
+    cloud_cover: currentData!.cloud_cover,
     sunrise,
     sunset,
     rain_probability: rainProb,
@@ -253,6 +256,7 @@ const searchCity = async () => {
     citySearch.value = ''
   } catch (error) {
     searchError.value = 'City not found. Please try again.'
+    console.log(error)
   } finally {
     isSearching.value = false
   }
@@ -320,7 +324,7 @@ const createChart = () => {
           pointBorderColor: '#fff',
           pointHoverBackgroundColor: '#fff',
           pointHoverBorderColor: 'rgb(75, 192, 192)',
-          tension: 0.4,
+          tension: 0.1,
           fill: true,
         },
       ],
@@ -342,6 +346,8 @@ const createChart = () => {
       scales: {
         y: {
           beginAtZero: true,
+          min:0,
+          max:100,
           grid: { color: 'rgba(255, 255, 255, 0.1)' },
           ticks: { color: 'rgba(255, 255, 255, 0.7)' },
         },
@@ -388,72 +394,67 @@ watch(weatherData, (newData) => {
 </script>
 
 <template>
-  <main class="m-4 mt-1 md:grid md:grid-cols-4 gap-8 auto-rows-[16rem] justify-center pb-24">
-    <!-- Search Bar -->
-    <GlassCard
-      v-if="showSearchInput"
-      class="col-span-full p-4 mb-4"
-      radius="rounded-md"
-    >
-      <div class="flex flex-col gap-3">
-        <div class="flex gap-2">
-          <input
-            v-model="citySearch"
-            @keypress="handleSearchKeypress"
-            type="text"
-            placeholder="Enter city name (e.g., London, New York, Tokyo)"
-            class="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            :disabled="isSearching"
-          />
-          <button
-            @click="searchCity"
-            :disabled="isSearching || !citySearch.trim()"
-            class="px-6 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-zinc-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
-          >
-            {{ isSearching ? 'Searching...' : 'Search' }}
-          </button>
-          <button
-            @click="useCurrentLocation"
-            :disabled="isSearching"
-            class="px-4 py-2 bg-green-500 hover:bg-green-600 disabled:bg-zinc-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
-            title="Use current location"
-          >
-            📍
-          </button>
-          <button
-            @click="toggleSearchInput"
-            class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg font-semibold transition-colors"
-          >
-            ✕
-          </button>
-        </div>
-        <p v-if="searchError" class="text-red-400 text-sm">{{ searchError }}</p>
-      </div>
-    </GlassCard>
+  <main class="m-4 mt-4 md:grid md:grid-cols-4 gap-8 auto-rows-[22rem] justify-center pb-24">
 
     <GlassCard
       v-if="weatherData"
       class="col-span-2 row-span-2 p-6"
-      radius="rounded-md"
       :delay="100"
     >
       <div class="flex flex-col h-full justify-between">
-        <div class="flex justify-between items-start">
-          <div>
-            <h2 class="text-3xl font-bold">
-              {{
-                weatherData.location
-                  ? weatherData.location
-                    .split(',')
-                    .map(p => p.trim())
-                    .filter((part, i, arr) => i !== 1 || part !== arr[0])
-                    .join(', ')
-                  : ''
-              }}
-            </h2>
-            <p class="text-lg text-zinc-400">{{ weatherDescriptionText }}</p>
-          </div>
+        <div class="flex justify-between items-start min-h-20">
+          <Transition name="slide-fade" mode="out-in">
+            <div v-if="!showSearchInput" key="display">
+              <h2 class="text-3xl font-bold">
+                {{
+                  weatherData.location
+                    ? weatherData.location
+                      .split(',')
+                      .map(p => p.trim())
+                      .filter((part, i, arr) => i !== 1 || part !== arr[0])
+                      .join(', ')
+                    : ''
+                }}
+              </h2>
+              <p class="text-lg text-zinc-400">{{ weatherDescriptionText }}</p>
+            </div>
+            <div v-else key="search" class="flex flex-col gap-3 w-full">
+              <div class="flex gap-2">
+                <input
+                  v-model="citySearch"
+                  @keypress="handleSearchKeypress"
+                  type="text"
+                  placeholder="Enter city name (e.g., London, New York, Tokyo)"
+                  class="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  :disabled="isSearching"
+                />
+                <button
+                  @click="searchCity"
+                  :disabled="isSearching || !citySearch.trim()"
+                  class="px-6 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-zinc-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
+                >
+                  {{ isSearching ? 'Searching...' : 'Search' }}
+                </button>
+                <button
+                  @click="useCurrentLocation"
+                  :disabled="isSearching"
+                  class="px-4 py-2 bg-green-500 hover:bg-green-600 disabled:bg-zinc-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors"
+                  title="Use current location"
+                >
+                  📍
+                </button>
+                <button
+                  @click="toggleSearchInput"
+                  class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg font-semibold transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+              <p v-if="searchError" class="text-red-400 text-sm">{{ searchError }}</p>
+            </div>
+          </Transition>
           <button
+            v-if="!showSearchInput"
             @click="toggleSearchInput"
             class="p-2 hover:bg-white/10 rounded-lg transition-colors"
             title="Search for a city"
@@ -472,7 +473,7 @@ watch(weatherData, (newData) => {
           </button>
         </div>
 
-        <div class="flex items-center justify-center my-4">
+        <div class="flex items-center justify-center">
           <div class="text-8xl">
             <span
             ><img
@@ -487,32 +488,28 @@ watch(weatherData, (newData) => {
           </div>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center min-h-20">
           <div>
             <p class="text-sm text-zinc-400 mb-1">Feels like</p>
             <p class="font-bold text-xl flex items-center justify-center gap-2">
-              <span>🌡️</span>
               <span>{{ weatherData.feels_like }}°C</span>
             </p>
           </div>
           <div>
             <p class="text-sm text-zinc-400 mb-1">Wind</p>
             <p class="font-bold text-xl flex items-center justify-center gap-2">
-              <span>🌬️</span>
               <span>{{ weatherData.wind_speed }} km/h</span>
             </p>
           </div>
           <div>
             <p class="text-sm text-zinc-400 mb-1">Humidity</p>
             <p class="font-bold text-xl flex items-center justify-center gap-2">
-              <span>💧</span>
               <span>{{ weatherData.humidity }}%</span>
             </p>
           </div>
           <div>
             <p class="text-sm text-zinc-400 mb-1">Cloud cover</p>
             <p class="font-bold text-xl flex items-center justify-center gap-2">
-              <span>☁️</span>
               <span>{{ weatherData.cloud_cover }}%</span>
             </p>
           </div>
@@ -520,7 +517,7 @@ watch(weatherData, (newData) => {
       </div>
     </GlassCard>
 
-    <GlassCard v-if="weatherData" class="md:col-span-2 p-4" radius="rounded-md" :delay="200">
+    <GlassCard v-if="weatherData" class="md:col-span-2 p-4"  :delay="200">
       <div class="flex flex-col h-full">
         <h2 class="text-2xl font-bold">Precipitation Trend</h2>
         <p class="text-md text-zinc-400">Next 24 hours</p>
@@ -530,7 +527,7 @@ watch(weatherData, (newData) => {
       </div>
     </GlassCard>
 
-    <GlassCard v-if="weatherData" radius="rounded-md" :delay="300">
+    <GlassCard v-if="weatherData" :delay="300">
       <div class="flex flex-col items-center justify-center h-full text-center">
         <h3 class="font-bold text-zinc-100 mb-2">Sunrise</h3>
         <svg
@@ -557,7 +554,7 @@ watch(weatherData, (newData) => {
       </div>
     </GlassCard>
 
-    <GlassCard v-if="weatherData" radius="rounded-md" :delay="400">
+    <GlassCard v-if="weatherData" :delay="400">
       <div class="flex flex-col items-center justify-center h-full text-center">
         <h3 class="font-bold text-zinc-100 mb-2">Sunset</h3>
         <svg
@@ -582,120 +579,33 @@ watch(weatherData, (newData) => {
       </div>
     </template>-->
 
-    <!-- Footer Navigation -->
-    <footer
+    <!-- Footer Navigation moved to component -->
+    <AppFooter
       v-if="weatherData"
-      class="fixed w-50/51 bottom-2 left-1/2 -translate-x-1/2 rounded-2xl drop-shadow-2xl blur-target bg-[rgba(30,30,30,0.25)] border border-white/30 px-2"
-    >
-      <div class="flex items-center justify-between">
-        <!-- Left Navigation -->
-        <div class="flex items-center gap-4">
-          <button
-            @click="navigateToStart"
-            :disabled="!canGoPrevious"
-            :class="[
-          'p-2 rounded-lg transition-all duration-200',
-          canGoPrevious
-            ? 'hover:bg-white/10 text-white cursor-pointer'
-            : 'text-zinc-600 cursor-not-allowed'
-        ]"
-            title="Go to start"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <polyline points="11 17 6 12 11 7"></polyline>
-              <polyline points="18 17 13 12 18 7"></polyline>
-            </svg>
-          </button>
-
-          <button
-            @click="navigatePreviousHour"
-            :disabled="!canGoPrevious"
-            :class="[
-          'p-2 rounded-lg transition-all duration-200',
-          canGoPrevious
-            ? 'hover:bg-white/10 text-white cursor-pointer'
-            : 'text-zinc-600 cursor-not-allowed'
-        ]"
-            title="Previous hour"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Center - Date & Time -->
-        <div class="text-center">
-          <p class="text-white font-semibold text-lg">{{ currentDateTime.time }}</p>
-          <p class="text-zinc-400 text-sm">{{ currentDateTime.date }}</p>
-        </div>
-
-        <!-- Right Navigation -->
-        <div class="flex items-center gap-4">
-          <button
-            @click="navigateNextHour"
-            :disabled="!canGoNext"
-            :class="[
-          'p-2 rounded-lg transition-all duration-200',
-          canGoNext
-            ? 'hover:bg-white/10 text-white cursor-pointer'
-            : 'text-zinc-600 cursor-not-allowed'
-        ]"
-            title="Next hour"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
-
-          <button
-            @click="navigateToEnd"
-            :disabled="!canGoNext"
-            :class="[
-          'p-2 rounded-lg transition-all duration-200',
-          canGoNext
-            ? 'hover:bg-white/10 text-white cursor-pointer'
-            : 'text-zinc-600 cursor-not-allowed'
-        ]"
-            title="Go to end"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <polyline points="13 17 18 12 13 7"></polyline>
-              <polyline points="6 17 11 12 6 7"></polyline>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </footer>
+      :can-go-previous="canGoPrevious"
+      :can-go-next="canGoNext"
+      :current-date-time="currentDateTime"
+      @to-start="navigateToStart"
+      @previous-hour="navigatePreviousHour"
+      @next-hour="navigateNextHour"
+      @to-end="navigateToEnd"
+    />
   </main>
 </template>
 
+<style>
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.3s ease;
+}
 
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+</style>

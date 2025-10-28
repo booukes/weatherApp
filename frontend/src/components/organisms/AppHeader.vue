@@ -7,9 +7,9 @@ import IconLogo from '@/components/icons/IconLogo.vue'
 <template>
   <div class="p-4">
     <header
-      class="backdrop-blur-xs hover:backdrop-blur-xl transition-all duration-200 ease-in-out sticky z-50 rounded-2xl drop-shadow-2xl blur-target"
+      class="backdrop-blur-xs hover:backdrop-blur-xl transition-all duration-200 ease-in-out sticky z-50 rounded-lg drop-shadow-2xl blur-target"
     >
-      <nav class="p-6 md:p-4 flex items-center w-full rounded-2xl bg-[rgba(30,30,30,0.25)] border border-white/30 nav-container">
+      <nav class="p-6 md:p-4 flex items-center w-full rounded-lg bg-[rgba(30,30,30,0.25)] border border-white/30 nav-container">
         <div class="hidden md:flex justify-start nav-left">
           <LogoText />
         </div>
@@ -27,8 +27,6 @@ import IconLogo from '@/components/icons/IconLogo.vue'
 </template>
 
 <style scoped>
-
-
 .nav-left,
 .nav-right {
   flex: 1 1 0;
