@@ -5,6 +5,17 @@ export enum dataType {
     weather = "/api/weatherData",
     aqi = "/api/airQualityData",
 }
+export enum forecast_types {
+  current = "current",
+  hourly = "hourly"
+}
+export enum forecast_days {
+  one = '1',
+  three = '3',
+  seven = '7',
+  fourteen = '14',
+  sixteen = '16'
+}
 
 export const useDataStore = defineStore('data', {
   state: () => ({
