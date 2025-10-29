@@ -1,4 +1,5 @@
-import { reactive, nextTick } from 'vue'
+import { reactive } from 'vue'
+import type { WeatherData } from '@/components/composables/useWeatherData.ts'
 
 interface ChatMessage {
     role: 'user' | 'ai'
@@ -39,7 +40,7 @@ export function useAIAssistant() {
         })
     }
 
-    const getWeatherAdvice = async (weatherData: any) => {
+    const getWeatherAdvice = async (weatherData: WeatherData) => {
         if (!weatherData) return
 
         if (state.rateLimitCooldown) {
@@ -59,9 +60,10 @@ export function useAIAssistant() {
                 await loadPuterScript()
             }
 
-            if (!window.puter || !window.puter.ai) {
-                throw new Error('AI service not available. Please refresh the page and try again.')
-            }
+          if (!window.puter || !window.puter.ai) {
+            state.error = 'AI service not available. Please refresh the page and try again.'
+            return
+          }
 
             const prompt = `You are a helpful weather assistant. Based on this weather data, give brief, practical advice (1-2 sentences max, BUT if the query requires it, or it seems much better for a longer response, do it):
 
@@ -89,12 +91,16 @@ Give friendly, actionable advice about what to wear or activities to consider. B
                 }, 60000)
             }
 
-        } catch (error: any) {
-            console.error('AI Error:', error)
-            // Error handling logic here
+        } catch (error: unknown) {
+          console.error('AI Error:', error)
+
+          if (error instanceof Error) {
             state.error = error.message || 'Could not get AI advice. Please try again.'
+          } else {
+            state.error = 'An unexpected error occurred.'
+          }
         } finally {
-            state.isThinking = false
+          state.isThinking = false
         }
     }
 
@@ -115,12 +121,17 @@ Give friendly, actionable advice about what to wear or activities to consider. B
             }
             fullPrompt += 'AI: '
 
-            const response = await window.puter.ai.chat(fullPrompt, { model: 'gpt-4o-mini' })
+            const response = await window.puter!.ai.chat(fullPrompt, { model: 'gpt-4o-mini' })
             state.chatHistory.push({ role: 'ai', content: response })
 
-        } catch (error: any) {
+        } catch (error: unknown) {
+          if (error instanceof Error) {
             console.error('AI Follow-up Error:', error)
             state.error = error.message || 'Could not get AI response. Please try again.'
+          } else {
+            console.error("Unexpected error occurred.")
+            state.error = "Unexpected error occurred."
+          }
         } finally {
             state.isThinking = false
         }
