@@ -136,7 +136,7 @@ onMounted(async () => {
       console.warn('Geo error:', err)
       return { ulat: 52.22, ulon: 21.01 }
     })
-
+  localStorage.setItem('userCoords', JSON.stringify({lat: coords.ulat, lon: coords.ulon}))
   userCoords.value = { lat: coords.ulat, lon: coords.ulon }
   await loadWeatherData(coords.ulat, coords.ulon)
   hasVisitedHome.value = true

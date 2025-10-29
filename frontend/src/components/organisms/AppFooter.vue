@@ -18,7 +18,7 @@ const emit = defineEmits<{
 
 <template>
   <GlassCard
-    delay="250"
+    :delay="250"
     class="w-max md:w-128 bottom-2 left-1/2 -translate-x-1/2 p-1.5"
   >
     <div class="flex items-center justify-between w-full">
