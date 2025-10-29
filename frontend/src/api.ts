@@ -13,7 +13,6 @@ function deleteOldCachedData(newKey: string, keyDataType: dataType, lat?: string
   const weatherPrefix = forecast_type && lat && lon ? `${keyDataType}_${forecast_type}_14_${location}` : undefined
   const aqiPrefix = lat && lon && !forecast_type ? `${keyDataType}_${location}` : undefined
   const coordsPrefix = keyDataType===dataType.userCoords ? `${keyDataType}` : undefined
-
   for(let i=localStorage.length; i>=0; i--){
     const key = localStorage.key(i)
     if(!key || key===newKey) continue
@@ -71,7 +70,7 @@ export async function getWeather(
       data.locationName = locationName
     }
     localStorage.setItem(cacheKey, JSON.stringify(data))
-    deleteOldCachedData(cacheKey, dataType.AQIData, lat, lon, forecast_type)
+    deleteOldCachedData(cacheKey, dataType.weatherData, lat, lon, forecast_type)
     return data
   } else {
     const data = localStorage.getItem(cacheKey)
