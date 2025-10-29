@@ -1,7 +1,6 @@
-<!-- New component: src/components/FooterNavigation.vue -->
-
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
+import GlassCard from '@/components/atoms/GlassCard.vue'
 
 const props = defineProps<{
   canGoPrevious: boolean
@@ -18,12 +17,12 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <footer
-    class="w-max md:w-128 bottom-2 left-1/2 -translate-x-1/2 rounded-lg drop-shadow-2xl blur-target border-white/30 md:bg-[rgba(30,30,30,0.25)] backdrop-blur-2xl border px-2"
+  <GlassCard
+    delay="250"
+    class="w-max md:w-128 bottom-2 left-1/2 -translate-x-1/2 p-1.5"
   >
-    <div class="flex items-center justify-between">
-      <!-- Left Navigation -->
-      <div class="flex items-center gap-4">
+    <div class="flex items-center justify-between w-full">
+      <div class="flex items-center gap-1">
         <button
           @click="emit('to-start')"
           :disabled="!props.canGoPrevious"
@@ -72,14 +71,12 @@ const emit = defineEmits<{
         </button>
       </div>
 
-      <!-- Center - Date & Time -->
-      <div class="text-center">
+      <div class="text-center flex-1 px-4">
         <p class="text-white font-semibold text-lg">{{ props.currentDateTime.time }}</p>
         <p class="text-zinc-400 text-sm">{{ props.currentDateTime.date }}</p>
       </div>
 
-      <!-- Right Navigation -->
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-1">
         <button
           @click="emit('next-hour')"
           :disabled="!props.canGoNext"
@@ -128,5 +125,5 @@ const emit = defineEmits<{
         </button>
       </div>
     </div>
-  </footer>
+  </GlassCard>
 </template>

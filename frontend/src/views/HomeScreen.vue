@@ -1,6 +1,6 @@
 <template>
   <AppHeader />
-  <main class="mx-4 md:grid md:grid-cols-4 gap-8 auto-rows-max justify-center">
+  <main class="mx-4 md:grid md:grid-cols-4 gap-8 auto-rows-[16rem] justify-center">
     <WeatherMainCard
       v-if="weatherData"
       :weather-data="weatherData"

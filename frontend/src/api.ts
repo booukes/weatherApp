@@ -46,7 +46,6 @@ export async function getWeather(
     const res = await fetch(`/api/weatherData?lat=${lat}&lon=${lon}&forecast_type=${forecast_type}&forecast_days=${forecast_days}`);
     const data = await res.json()
 
-    // Add location name to the data if provided
     if(locationName && data) {
       if(data.hourly) {
         data.hourly = data.hourly.map((item: any) => ({

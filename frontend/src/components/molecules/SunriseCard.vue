@@ -1,5 +1,5 @@
 <template>
-  <GlassCard :delay="300">
+  <GlassCard :delay="150">
     <div class="flex flex-col items-center justify-center h-full text-center">
       <h3 class="font-bold text-zinc-100 mb-2">Sunrise</h3>
       <svg

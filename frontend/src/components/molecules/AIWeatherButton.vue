@@ -3,10 +3,8 @@
     @click="emit('click')"
     :disabled="isThinking || rateLimitCooldown"
     :class="[
-      'w-full px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl',
+      'w-full px-6 py-3 rounded-lg border-white/30 border font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl',
       rateLimitCooldown
-        ? 'bg-zinc-700 cursor-not-allowed'
-        : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 disabled:from-zinc-600 disabled:to-zinc-600 disabled:cursor-not-allowed'
     ]"
   >
     <span v-if="rateLimitCooldown">⏱️ Please wait...</span>

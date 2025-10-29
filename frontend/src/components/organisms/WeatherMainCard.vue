@@ -1,8 +1,7 @@
 <template>
-  <GlassCard class="col-span-2 row-span-2 p-6" :delay="100">
-    <div class="flex flex-col h-full justify-between">
-      <!-- Header Section -->
-      <div class="flex justify-between items-start min-h-20">
+  <GlassCard class="col-span-2 row-span-2 p-8" :delay="50">
+    <div class="flex flex-col h-full">
+      <div class="flex justify-between items-start mb-8">
         <Transition name="slide-fade" mode="out-in">
           <WeatherLocation
             v-if="!showSearch"
@@ -23,22 +22,22 @@
           />
         </Transition>
       </div>
-
-      <!-- Temperature Display -->
-      <WeatherDisplay
-        :condition="weatherData.description"
-        :temperature="weatherData.temperature"
-      />
-
-      <!-- Stats Grid -->
-      <WeatherStats :weather-data="weatherData" />
-
-      <!-- AI Button -->
-      <AiWeatherButton
-        :is-thinking="aiState.isThinking"
-        :rate-limit-cooldown="aiState.rateLimitCooldown"
-        @click="emit('get-advice')"
-      />
+      <div class="flex-1 flex items-center justify-center -mt-8 mb-8">
+        <WeatherDisplay
+          :condition="weatherData.description"
+          :temperature="weatherData.temperature"
+        />
+      </div>
+      <div >
+        <WeatherStats :weather-data="weatherData" />
+      </div>
+      <div>
+        <AiWeatherButton
+          :is-thinking="aiState.isThinking"
+          :rate-limit-cooldown="aiState.rateLimitCooldown"
+          @click="emit('get-advice')"
+        />
+      </div>
     </div>
   </GlassCard>
 </template>

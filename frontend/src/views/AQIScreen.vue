@@ -180,7 +180,7 @@ watch([aqiData, eaqiChartCanvas], () => {
 <template>
   <AppHeader />
   <main class="m-4 grid grid-cols-2 md:grid-cols-4 gap-8 auto-rows-[16rem] justify-center">
-    <GlassCard v-if="aqiData" class="col-span-2 row-span-2" radius="rounded-md" :delay="100">
+    <GlassCard v-if="aqiData" class="p-4 col-span-2 row-span-2" radius="rounded-md" :delay="100">
       <div class="flex flex-col h-full">
         <div class="flex justify-between items-start">
           <div>
@@ -201,7 +201,7 @@ watch([aqiData, eaqiChartCanvas], () => {
       </div>
     </GlassCard>
 
-    <GlassCard class="h-full col-span-2" radius="rounded-md" :delay="200">
+    <GlassCard class="p-4 h-full col-span-2" radius="rounded-md" :delay="200">
       <div class="flex flex-col h-full">
         <div class="mb-4">
           <h2 class="text-2xl font-bold">EAQI Trend</h2>
@@ -213,7 +213,7 @@ watch([aqiData, eaqiChartCanvas], () => {
       </div>
     </GlassCard>
 
-    <GlassCard v-if="dominantPollutantInfo" class="col-span-1" radius="rounded-md" :delay="300">
+    <GlassCard v-if="dominantPollutantInfo" class="p-4 col-span-1" radius="rounded-md" :delay="300">
       <div class="flex flex-col h-full justify-between">
         <div>
           <h3 class="font-bold text-zinc-300">Dominant Pollutant</h3>
@@ -222,16 +222,16 @@ watch([aqiData, eaqiChartCanvas], () => {
           <p class="text-4xl font-bold">{{ dominantPollutantInfo.name }}</p>
           <p class="font-mono text-lg text-zinc-200">{{ dominantPollutantInfo.value }} <span class="text-xs text-zinc-400">{{ dominantPollutantInfo.unit }}</span></p>
         </div>
-        <div class="text-xs text-zinc-500">
+        <div class="text-xs text-zinc-300">
           This is the main pollutant affecting the current AQI score.
         </div>
       </div>
     </GlassCard>
 
-    <GlassCard v-if="aqiInfo" class="col-span-1" radius="rounded-md" :delay="400">
+    <GlassCard v-if="aqiInfo" class="p-4 col-span-1" radius="rounded-md" :delay="400">
       <div class="flex flex-col h-full justify-between">
         <div>
-          <h3 class="font-bold text-zinc-300">Health Advice</h3>
+          <h3 class="font-bold mb-32text-zinc-300">Health Advice</h3>
         </div>
         <div class="text-center my-4">
           <p class="text-lg leading-tight" :class="aqiInfo.color">{{ aqiInfo.advice }}</p>

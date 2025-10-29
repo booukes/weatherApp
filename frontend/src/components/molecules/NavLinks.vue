@@ -7,10 +7,6 @@
     <li>
       <RouterLink class="text-zinc-400 relative pb-2 hover:text-zinc-100 transition-colors duration-200 ease-in-out" to="/aqi">AQI</RouterLink>
     </li>
-    <!--<div class="w-px h-5 bg-zinc-600"/>
-    <li>
-      <RouterLink class="text-zinc-400 relative pb-2 hover:text-zinc-100 transition-colors duration-200 ease-in-out" to="/settings">Settings</RouterLink>
-    </li>-->
   </ul>
 </template>
 

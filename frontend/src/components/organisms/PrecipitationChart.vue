@@ -1,5 +1,5 @@
 <template>
-  <GlassCard class="md:col-span-2 p-4" :delay="200">
+  <GlassCard class="md:col-span-2 p-4" :delay="100">
     <div class="flex flex-col h-full">
       <h2 class="text-2xl font-bold">Precipitation Trend</h2>
       <p class="text-md text-zinc-400">Next 24 hours</p>

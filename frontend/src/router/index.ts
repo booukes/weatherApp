@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AqiScreen from '../views/AQIScreen.vue'
-import AppSettings from '../views/AppSettings.vue'
 import HomeScreen from '../views/HomeScreen.vue'
 import { ref } from 'vue'
 
@@ -11,11 +10,6 @@ const router = createRouter({
       path: '/aqi',
       name: 'aqi',
       component: AqiScreen,
-    },
-    {
-      path: '/settings',
-      name: 'settings',
-      component: AppSettings,
     },
     {
       path: '/',
