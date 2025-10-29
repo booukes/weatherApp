@@ -28,16 +28,20 @@ function deleteOldCachedData(newKey: string, keyDataType: dataType, lat?: string
 
 function generateCacheKey(keyDataType: dataType, lat?: string, lon?: string, forecast_type?: forecast_types, forecast_days?: Number){
   const location = `${lat},${lon}`
-  const date = new Date()
-  const timestamp = `${date.getDate()}/${date.getHours()}`
-  let key
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0"); 
+  const day = String(now.getDate()).padStart(2, "0");
+  const hour = String(now.getHours()).padStart(2, "0");
+  const timestamp = `${year}-${month}-${day}`;
+  let key = ''
   if(location.length==0 || keyDataType===dataType.userCoords){
     key = `${keyDataType}`
   } else {
     if(forecast_type===forecast_types.hourly){
       key = `${keyDataType}_${forecast_types.hourly}_${forecast_days}_${location}_${timestamp}`
     } else {
-      key = `${keyDataType}_${location}_${timestamp}`
+      key = `${keyDataType}_${location}_${timestamp}-${hour}`
     }
   }
   return key
