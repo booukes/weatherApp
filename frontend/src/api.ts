@@ -8,6 +8,25 @@ export enum forecast_types{
   hourly = 'hourly'
 }
 
+function deleteOldCachedData(newKey: string, keyDataType: dataType, lat?: string, lon?: string, forecast_type?: forecast_types){
+  const location = `${lat},${lon}`
+  const weatherPrefix = forecast_type && lat && lon ? `${keyDataType}_${forecast_type}_14_${location}` : undefined
+  const aqiPrefix = lat && lon && !forecast_type ? `${keyDataType}_${location}` : undefined
+  const coordsPrefix = keyDataType===dataType.userCoords ? `${keyDataType}` : undefined
+
+  for(let i=localStorage.length; i>=0; i--){
+    const key = localStorage.key(i)
+    if(!key || key===newKey) continue
+    if(
+      (weatherPrefix && key.startsWith(weatherPrefix)) ||
+      (aqiPrefix && key.startsWith(aqiPrefix)) ||
+      (coordsPrefix && key.startsWith(coordsPrefix))
+    ){
+      localStorage.removeItem(key)
+    }
+  }
+}
+
 function generateCacheKey(keyDataType: dataType, lat?: string, lon?: string, forecast_type?: forecast_types, forecast_days?: Number){
   const location = `${lat},${lon}`
   const date = new Date()
@@ -16,20 +35,15 @@ function generateCacheKey(keyDataType: dataType, lat?: string, lon?: string, for
   if(location.length==0 || keyDataType===dataType.userCoords){
     key = `${keyDataType}`
   } else {
-    switch(forecast_type){
-      case forecast_types.current:
-        key = `${keyDataType}_${location}_${timestamp}`
-        break
-      case forecast_types.hourly:
-        key = `${keyDataType}_${forecast_types.hourly}_${forecast_days}_${location}_${timestamp}`
-        break
-      default:
-        key = `${keyDataType}_${location}_${timestamp}`
-        break
+    if(forecast_type===forecast_types.hourly){
+      key = `${keyDataType}_${forecast_types.hourly}_${forecast_days}_${location}_${timestamp}`
+    } else {
+      key = `${keyDataType}_${location}_${timestamp}`
     }
   }
   return key
 }
+
 function isInCache(key: string){
   return localStorage.getItem(key) ? true : false
 }
@@ -41,6 +55,7 @@ export async function getWeather(
   forecast_days: Number = 1,
   locationName?: string
 ) {
+
   const cacheKey = generateCacheKey(dataType.weatherData, lat, lon, forecast_type, forecast_days)
   if(!isInCache(cacheKey)){
     const res = await fetch(`/api/weatherData?lat=${lat}&lon=${lon}&forecast_type=${forecast_type}&forecast_days=${forecast_days}`);
@@ -55,8 +70,8 @@ export async function getWeather(
       }
       data.locationName = locationName
     }
-
     localStorage.setItem(cacheKey, JSON.stringify(data))
+    deleteOldCachedData(cacheKey, dataType.AQIData, lat, lon, forecast_type)
     return data
   } else {
     const data = localStorage.getItem(cacheKey)
@@ -70,6 +85,7 @@ export async function getAQI(lat: string, lon: string) {
     const res = await fetch(`/api/airQualityData?lat=${lat}&lon=${lon}`);
     const data = await res.json()
     localStorage.setItem(cacheKey, JSON.stringify(data))
+    deleteOldCachedData(cacheKey, dataType.AQIData, lat, lon)
     return data
   } else{
     const data = localStorage.getItem(cacheKey)
@@ -96,6 +112,7 @@ export async function getGeolocation(): Promise<Coordinates> {
             lon: position.coords.longitude
           }
           localStorage.setItem(cacheKey, JSON.stringify(data))
+          deleteOldCachedData(cacheKey, dataType.userCoords)
           resolve(data);
         },
         (error) => {
